@@ -38,7 +38,7 @@ r = 7
 pi = 3.14159
 # ↓ 你的代码写在这里 ↓
 y = pi * r * r 
-print(f"半径为{r}的圆，面积是{y}")
+print(f"circle with r={r}, area={y}")
 
 
 
@@ -46,7 +46,7 @@ print(f"半径为{r}的圆，面积是{y}")
 # （提示：不能用 input，直接把字符串赋值给变量即可）
 my_str = "DevOps"
 # ↓ 你的代码写在这里 ↓
-print(f"长度: {len(my_str)}")
-print(f"第一个: {my_str[0]}")
-print(f"最后一个: {my_str[-1]}")
-print(f"前3个: {my_str[:3]}")
+print(f"length: {len(my_str)}")
+print(f"first: {my_str[0]}")
+print(f"last: {my_str[-1]}")
+print(f"first 3: {my_str[:3]}")
