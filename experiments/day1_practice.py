@@ -50,3 +50,24 @@ print(f"length: {len(my_str)}")
 print(f"first: {my_str[0]}")
 print(f"last: {my_str[-1]}")
 print(f"first 3: {my_str[:3]}")
+
+
+
+"""
+Personal System Intro — Day 1 Mini Project
+"""
+name = "Tao"
+role = "DevOps Engineer"
+years_exp = 5
+city = "Toronto"
+
+# 1. 用 f-string 打印一句话介绍
+# 2. 把 role 转大写并打印
+# 3. 打印 city 的前 3 个字符
+# 4. 用 * 画一条分隔线（例如 "=" * 30）
+
+print(f"I am {name},A {role} and i have {years_exp}years exprincene,I live in {city}")
+print(role.upper())
+print(city[:3])
+print("*"*30)
+
