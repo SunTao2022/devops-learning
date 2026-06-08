@@ -1,0 +1,35 @@
+#!/bin/bash
+# Gemma4 local helper — Ollama API version
+# Usage: gemma "your question"
+#        gemma review <file>
+#        gemma explain <concept>
+
+API="http://localhost:11434/api/generate"
+MODEL="gemma4:12b"
+
+ask() {
+  local prompt="$1"
+  # Escape for JSON: backslash, quote, newline
+  local escaped=$(echo "$prompt" | python -c "import sys,json; print(json.dumps(sys.stdin.read()))")
+  curl -s "$API" -d "{\"model\":\"$MODEL\",\"prompt\":$escaped,\"stream\":false}" \
+    | python -c "import sys,json; print(json.load(sys.stdin)['response'])"
+}
+
+case "${1:-help}" in
+  review)
+    FILE="$2"
+    [ -z "$FILE" ] && { echo "Usage: gemma review <file>"; exit 1; }
+    echo "=== Reviewing: $FILE ==="
+    ask "Review this Python code for bugs, style issues, and improvements. Be concise:\n\n$(cat "$FILE")"
+    ;;
+  explain)
+    shift
+    [ -z "$*" ] && { echo "Usage: gemma explain <concept>"; exit 1; }
+    ask "Explain '$*' in Python simply, with a code example. 3-5 sentences."
+    ;;
+  chat|*)
+    shift
+    [ -z "$*" ] && { echo "Usage: gemma <question>"; echo "       gemma review <file>"; echo "       gemma explain <concept>"; exit 1; }
+    ask "$*"
+    ;;
+esac
