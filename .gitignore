@@ -1,0 +1,16 @@
+# Editor temp files
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS artifacts
+desktop.ini
