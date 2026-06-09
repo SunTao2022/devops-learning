@@ -1,0 +1,3 @@
+server=web-01,status=running,cpu=45
+server=db-01,status=stopped,cpu=12
+server=web-02,status=running,cpu=78
