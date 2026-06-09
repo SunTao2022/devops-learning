@@ -34,3 +34,32 @@
 ---
 
 <!-- 每天在下面追加，不要覆盖已有内容 -->
+
+## Day 2 — 2026-06-09 (周二)
+
+### ✅ 今日完成
+- [x] 复习：Day 1~3 全部代码 + 概念（三题全对）
+- [x] 学习：文件操作（open/read/write）、异常处理（try/except）
+- [x] 练习：Day 4 五道题全部完成（Q1~Q5）
+- [x] Linux: 文件路径与 Path(__file__).parent 用法
+- [x] Git: git add/commit/push
+
+### 📝 关键知识点
+1. **`for line in f:` 逐行读文件** — 文件对象是行迭代器，每次吐一行
+2. **`try/except` 异常处理** — 用 `except ZeroDivisionError:` 和 `except FileNotFoundError:` 防崩溃
+3. **路径问题** — 用 `Path(__file__).parent` 让脚本从任何目录运行都不报错
+
+###  ️ 遇到的坑
+- 从 `experiments/` 目录里运行 VS Code，相对路径 `experiments/servers.txt` 变成双重嵌套
+- 切片 `log[11:15]` 只取了 "ERRO" 漏了最后一个 R
+- `except NameError` 应该用 `except FileNotFoundError`
+
+### 📊 投入时间
+- 学习：90 分钟
+- 练习：60 分钟
+- 实验：30 分钟
+- 复习：30 分钟
+- **总计**：210 分钟
+
+### 🎯 明天计划
+- Day 5：文件操作进阶 + CSV 解析
