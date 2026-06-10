@@ -4,3 +4,5 @@ INFO  Request received
 ERROR Disk full
 WARN  Memory high
 BBBBAAAA
+CCCCC
+DDDDD
