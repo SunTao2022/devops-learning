@@ -15,5 +15,4 @@ Thumbs.db
 # OS artifacts
 desktop.ini
 *.log
-_pycache_/
 __pycache__/
