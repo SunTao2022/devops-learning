@@ -1,4 +1,6 @@
-2026-06-08 INFO  Server started
-2026-06-08 ERROR DB connection failed
-2026-06-08 INFO  Request received
-2026-06-08 ERROR Timeout exceeded
+INFO  Server started
+ERROR Connection timeout
+INFO  Request received
+ERROR Disk full
+WARN  Memory high
+BBBBAAAA
