@@ -1,0 +1,12 @@
+import re
+
+log = "Server 10.0.0.1 is DOWN"
+
+masked = re.sub(r'\d+\.\d+\.\d+\.\d+' , '***.***.***.***' , log)
+
+print(masked)
+
+
+status = re.sub(r'DOWN', '🔴' , log)
+
+print(status)
