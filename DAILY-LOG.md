@@ -73,44 +73,108 @@
 ## Day 6 — 2026-06-10 (周三)
 
 ### ✅ 今日完成
-- [x] 复习：Day 4~5 概念问答（文件 I/O、异常、Linux 管道、git --amend）
-- [x] Python: 条件判断 if/elif/else — check_status() 函数
-- [x] Python: for 循环 + enumerate — 编号 IP 列表
-- [x] Python: 文件 I/O + split + 条件综合 — 过滤 stopped 服务器
-- [x] Python: 正则 re.search() + re.findall() — 提取 IP 地址
-- [x] Linux: grep -oPcnir、管道链 sort|uniq -c|sort -rn
-- [x] Linux: ps aux 进程查看（WSL 上实操）
-- [x] Git: commit --amend（暂存区 vs 工作区概念）
-- [x] Git: .gitignore + __pycache__/ 管理
-- [x] Git: 分支工作流 switch/checkout/merge/branch -d（完整实战）
-- [x] 配置: 内存扩容 2200→4000 / 1375→2500，每周日 cron 清理，DeepSeek 回落 Gemma 修复
+- [x] 复习：Day 4~5 概念问答
+- [x] Python: 条件判断 if/elif/else
+- [x] Python: for 循环 + enumerate
+- [x] Python: 文件 I/O + split + 条件综合
+- [x] Python: 正则 re.search() + re.findall()
+- [x] Linux: grep + 管道链
+- [x] Linux: ps aux
+- [x] Git: commit --amend / .gitignore / 分支工作流
+- [x] 配置: 内存扩容、每周 cron 清理、DeepSeek 回落 Gemma
 - [x] GitHub 已推送
 
-### 📝 关键知识点
-1. **管道 `|`** — 左命令输出 → 右命令输入，每个命令只做一件事
-2. **`grep -oP '^\w+'`** — `-o` 只输出匹配部分，`-P` 启用正则，`^\w+` 行首连续单词
-3. **`sort | uniq -c | sort -rn`** — 排序 → 去重计数 → 按次数大到小
-4. **`enumerate(列表, start=1)`** — 遍历同时拿序号，拆包 `i, ip = (序号, 值)`
-5. **`re.search()` vs `re.findall()`** — search 返回 Match 对象需 `.group()`，findall 直接返回列表
-6. **正则 `\d` + `\.`** — `\d` 匹配数字，`\.` 转义点号（不加转义 `.` 是通配符）
-7. **`git commit --amend`** — 修改最后一个 commit，需先 `git add` 新内容，只适用于未 push 的 commit
-8. **Git 分支工作流** — `switch -c` 创建 → 改代码 → commit → `switch master` → `merge` → `branch -d`
-
-###  ️ 遇到的坑
-- `grep -oP` 最后的 `P` 是大写（Perl 正则），不是小写
-- 管道命令 grep 后面不能同时跟文件名和管道输入 — 要么搜文件，要么读管道
-- `git commit --amend` 不从工作区拿内容，只从暂存区拿 — 必须先 `git add`
-- `git cheout` 是 typo，正确是 `git checkout`
-- `echo "running" | grep -r` — `-r` 对 echo 没用，echo 只是输出文字，不是文件
-
 ### 📊 投入时间
-- 学习：120 分钟
-- 练习：90 分钟
-- 复习：30 分钟
 - **总计**：240 分钟
 
+---
+
+## Day 7 — 2026-06-11 (周四)
+
+### ✅ 今日完成
+- [x] Python: re.sub() 替换 — 日志 IP 脱敏
+- [x] Python: re.findall() 计数 — 统计 ERROR 数量
+- [x] Python: re.search() vs re.match() — match 只匹配行首
+- [x] Linux: find 命令（name/type/size/mtime）
+- [x] Git: fetch / pull / origin/master 概念
+- [x] Git: 分支分叉 + git log --graph --oneline --all
+
+### 📝 关键知识点
+1. **re.sub(r'模式', '替换', 字符串)** — 正则替换
+2. **re.match vs re.search** — match 只从开头找，search 全文找
+3. **find . -name/size/mtime** — 文件搜索三大维度
+4. **git fetch** — 安全查看远程更新，不改本地
+5. **git log --graph** — 可视化分支分叉
+
+### 📊 投入时间
+- **总计**：180 分钟
+
+---
+
+## Day 8 — 2026-06-12 (周五)
+
+### ✅ 今日完成
+- [x] Python: sys.argv — 命令行参数
+- [x] Python: os 模块 — getcwd/environ/listdir/path.join
+- [x] Linux: df -h / du -sh / sort -rh
+- [x] Git: 创建分叉、mergé、log --graph 验证
+- [x] 综合练习: find_servers.py — 用 sys.argv 过滤服务器状态
+
+### 📝 关键知识点
+1. **sys.argv** — Python 接住命令行参数
+2. **sys.exit(1)** — 脚本退出（0=正常，1=错误）
+3. **os.getcwd() / os.listdir() / os.environ.get()**
+4. **os.path.join()** — 安全拼接路径
+5. **df -h** — 磁盘剩余空间
+6. **du -sh * | sort -rh** — 最大目录排行
+7. **标志变量** — `found = False` → 找到了变 True
+
+### 📊 投入时间
+- **总计**：210 分钟
+
+---
+
+## Day 9 — 2026-06-13 (周六)
+
+### ✅ 今日完成
+- [x] Python: subprocess.run() — capture_output/text/解析输出
+- [x] Python: subprocess + 条件判断（df 使用率报警）
+- [x] Python: subprocess + 文件 I/O（结果写入 log）
+- [x] Python: 创建自定义模块 utils.py（3个函数）
+- [x] Python: import 模块并在主脚本中调用
+- [x] 笔记: 创建 STUDY-NOTES.md（19章完整知识库）
+
+### 📝 关键知识点
+1. **subprocess.run(["命令", "参数"], capture_output=True, text=True)**
+2. **result.stdout** — 命令输出字符串
+3. **result.returncode** — 返回码（0=成功）
+4. **创建模块** — 任意 .py 文件可被 import
+5. **return vs print** — return 返回值给调用者，print 打屏幕
+6. **列表推导式** — `[x for x in list if 条件]`
+
+### 📊 投入时间
+- **总计**：240 分钟
+
+---
+
+## Day 10 — 2026-06-14 (周日)
+
+### ✅ 今日完成
+- [x] 复习: subprocess + 条件判断综合练习
+- [x] Python: utils.py 完善（filter_servers 函数）
+- [x] 学习规则: 确立"先讲知识点 → 有提示练习 → 无提示巩固"流程
+- [x] 笔记: 完整 STUDY-NOTES.md（已推送到 GitHub）
+
+### 📝 关键知识点
+1. **模块引用** — `import utils` 调用自己写的函数
+2. **函数要有参数** — `def check_status(status):` 而不是空括号
+3. **return 不加括号** — `return x` 而不是 `return(x)`
+4. **split(",") 索引** — `parts[0]` 是名字，`parts[1]` 是状态
+
+### 📊 投入时间
+- **总计**：120 分钟
+
 ### 🎯 明天计划
-- Python: 正则加深（re.sub 替换，match vs search）
-- Linux: find + kill 实操
-- Git: pull/fetch、merge 冲突模拟
-- 实验：从日志提取 ERROR + IP 综合练习
+- Linux: kill + 网络命令实操
+- Git: 合并冲突模拟与解决
+- Python: 字符串格式化深入
