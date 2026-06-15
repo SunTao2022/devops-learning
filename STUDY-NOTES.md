@@ -674,6 +674,19 @@ kill 1234           # 温和终止（SIGTERM）
 kill -9 1234        # 强制杀掉（SIGKILL）
 ```
 
+### 网络命令
+
+```bash
+ping -n 4 目标IP     # 测试网络连通性（Windows MINGW 用 -n）
+ping -c 4 目标IP     # （Linux 用 -c）
+
+curl -I URL                    # 看 HTTP 响应头
+curl -s URL                    # 静默获取内容
+curl -s -o /dev/null -w "%{http_code}" URL  # 只看返回码（200=OK）
+```
+
+使用场景：检查服务器是否在线（ping）、API 是否正常返回（curl）。
+
 ---
 
 ## 14. Git 基础
@@ -779,6 +792,34 @@ git switch master            # 切回 master
 * | master commit
 |/
 * common ancestor
+```
+
+### 合并冲突解决
+
+**冲突发生条件：** 两个分支改了同一个文件的同一行。
+
+**冲突标记：**
+```
+<<<<<<< HEAD
+当前分支的内容
+=======
+要合并过来的分支的内容
+>>>>>>> other-branch
+```
+
+**解决 4 步：**
+1. 打开有冲突的文件
+2. 选择保留哪边（或改新内容）
+3. **删掉** `<<<<<<<`、`=======`、`>>>>>>>` 这三行
+4. `git add` → `git commit` 完成合并
+
+```bash
+# 完整流程
+git merge other-branch          # 报冲突
+# 手动编辑文件，删除冲突标记
+git add 冲突文件
+git commit -m "resolve conflict"
+git branch -d other-branch      # 合并完删分支
 ```
 
 查看图形：
