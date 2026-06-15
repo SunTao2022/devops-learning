@@ -1,4 +1,4 @@
-web-01,running
+web-01,maintenance
 web-02,stopped
 db-01,running
 cache-01,stopped
