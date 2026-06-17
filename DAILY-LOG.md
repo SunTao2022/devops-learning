@@ -178,3 +178,28 @@
 - Linux: kill + 网络命令实操
 - Git: 合并冲突模拟与解决
 - Python: 字符串格式化深入
+
+---
+
+## Day 13 — 2026-06-16 (周二)
+
+### ✅ 今日完成
+- [x] pip / venv 完整工作流（创建→激活→装包→导出→恢复→退出）
+- [x] argparse 参数类型（位置参数、可选参数、开关）
+- [x] 项目 1：日志分析器（log_analyzer.py）
+- [x] 字典计数 `counts.get(key, 0) + 1`
+- [x] tabulate 表格输出
+- [x] try/except 文件错误处理
+- [x] STUDY-NOTES.md 已更新（新增 argparse、pip/venv、项目 1）
+- [x] 已推送 GitHub
+
+### 📝 关键知识点
+1. **argparse** — `ArgumentParser` → `add_argument` → `.parse_args()`
+2. **`type=open` 陷阱** — 会立即打开文件，用 `with open(args.file)` 代替
+3. **`args.level if args.level else parts[1]`** — 条件表达式定键名
+4. **`counts[level] = counts.get(level, 0) + 1`** — 字典计数标准模式
+5. **`from tabulate import tabulate`** — 函数直接调用，不是 `tabulate.tabulate()`
+6. **`sys.exit(1)`** — 错误退出码
+
+### 📊 投入时间
+- **总计**：240 分钟
