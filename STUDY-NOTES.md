@@ -860,7 +860,200 @@ git log master..origin/master   # 远程有但本地没有的 commit
 
 ---
 
-## 17. 实验索引
+## 17. argparse — 专业命令行参数
+
+### 为什么用 argparse
+
+`sys.argv` 只能拿到原始参数列表，需要自己判断位置参数、选项、类型转换。`argparse` 自动处理这些。
+
+### 参数类型
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description="工具描述")
+
+# 位置参数（必须传）
+parser.add_argument("filename", help="文件路径")
+
+# 可选参数（-- 开头，不传用 None）
+parser.add_argument("--level", help="过滤级别")
+
+# 可选参数 + 默认值
+parser.add_argument("--port", type=int, default=80, help="端口号")
+
+# 开关参数（有 --verbose = True，没传 = False）
+parser.add_argument("--verbose", action="store_true", help="详细模式")
+
+args = parser.parse_args()
+
+print(args.filename)     # 用 . 取参数值
+print(args.level)
+print(args.port)
+print(args.verbose)
+```
+
+### 自动生成的帮助
+
+```bash
+python script.py -h
+```
+
+```text
+usage: script.py [-h] [--level LEVEL] [--port PORT] [--verbose] filename
+
+工具描述
+
+positional arguments:
+  filename       文件路径
+
+options:
+  -h, --help     show this help message and exit
+  --level LEVEL  过滤级别
+  --port PORT    端口号
+  --verbose      详细模式
+```
+
+### 三种模式（verbose / quiet）
+
+```python
+parser.add_argument("--verbose", action="store_true")
+parser.add_argument("--quiet", action="store_true")
+
+args = parser.parse_args()
+
+if args.verbose:
+    print("[INFO] 详细模式")      # 调试时打开
+if not args.quiet:
+    print("结果")                  # 安静模式不输出
+```
+
+---
+
+## 18. pip / venv — 包管理和虚拟环境
+
+### pip — 安装第三方包
+
+```bash
+python -m pip install requests        # 安装包
+python -m pip list                    # 查看已安装的包
+python -m pip show 包名               # 查看详情
+python -m pip uninstall 包名          # 卸载
+pip freeze > requirements.txt         # 导出依赖清单
+pip install -r requirements.txt       # 从清单恢复依赖
+```
+
+本机 `pip` 命令行不可用，需用 `python -m pip`。
+
+### venv — 虚拟环境
+
+```bash
+python -m venv 环境名                  # 创建虚拟环境
+source 环境名/Scripts/activate        # 激活（提示符前出现(环境名)）
+deactivate                            # 退出
+```
+
+### 为什么用 venv
+
+不同项目需要不同版本的包，venv 把它们隔离开。
+```
+项目 A: flask==1.0    项目 B: flask==2.0
+每个项目有自己的 venv，互不影响。
+```
+
+### 完整工作流
+
+```bash
+# 第一次
+cd ~/devops-learning
+python -m venv proj-venv              # 建环境
+source proj-venv/Scripts/activate     # 激活
+pip install requests tabulate          # 装包
+pip freeze > requirements.txt         # 导出清单
+
+# 下次回来
+source proj-venv/Scripts/activate     # 重新激活
+python script.py                       # 运行
+
+# 换电脑
+pip install -r requirements.txt       # 从清单恢复
+```
+
+### .gitignore
+
+venv 目录不应提交到 Git：
+
+```
+venv/
+proj-venv/
+```
+
+---
+
+## 19. 项目 1 — 日志分析器（Log Analyzer）
+
+### 完整代码
+
+```python
+import argparse
+from tabulate import tabulate
+import sys
+
+parser = argparse.ArgumentParser(description="log analyzer tool")
+parser.add_argument("file", help="log file to be analyzed")
+parser.add_argument("--level", help="filter by level")
+parser.add_argument("--output", help="export report to file")
+parser.add_argument("--verbose", action="store_true", help="verbose output")
+args = parser.parse_args()
+
+if args.verbose:
+    print("start analysing")
+
+try:
+    with open(args.file, "r") as f:
+        counts = {}
+        for line in f:
+            parts = line.strip().split()
+            if len(parts) < 2:
+                continue
+            if args.level and parts[1] != args.level:
+                continue
+            level = args.level if args.level else parts[1]
+            counts[level] = counts.get(level, 0) + 1
+
+        table = tabulate(counts.items(), headers=["Level", "Count"], tablefmt="grid")
+        print(table)
+
+        if args.output:
+            with open(args.output, "w") as f:
+                f.write(table + "\n")
+
+except FileNotFoundError:
+    print(f"Error: file '{args.file}' not found")
+    sys.exit(1)
+```
+
+### 用法
+
+```bash
+python log_analyzer.py app.log                    # 统计所有级别
+python log_analyzer.py app.log --level ERROR      # 过滤
+python log_analyzer.py app.log --output out.txt   # 导出文件
+python log_analyzer.py nonexist.log               # 错误提示
+```
+
+### 涉及的知识点
+
+- argparse（位置参数、可选参数、开关）
+- try/except 异常处理
+- with open 读文件
+- line.strip().split() 解析
+- 字典 `counts.get(level, 0) + 1` 计数
+- tabulate 表格输出
+
+---
+
+## 20. 实验索引
 
 | 文件名 | 涵盖内容 | 位置 |
 |--------|---------|------|
@@ -876,10 +1069,11 @@ git log master..origin/master   # 远程有但本地没有的 commit
 | utils.py | 自定义模块（3个函数） | `experiments/` |
 | day9_practice.py | import 模块测试 | `experiments/` |
 | system_info.py | 综合项目：收集系统信息 | `projects/` |
+| log_analyzer.py | 项目1：argparse + 字典计数 + tabulate | `experiments/` |
 | servers.txt | 练习数据文件（服务器列表） | `experiments/` |
 | app.log | 练习数据文件（日志） | `experiments/` |
 
 ---
 
-> **最后修改：2026-06-13**  
+> **最后修改：2026-06-16**  
 > 每次学完新内容后更新此文档

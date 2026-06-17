@@ -3,7 +3,4 @@ ERROR Connection timeout
 INFO  Request received
 ERROR Disk full
 WARN  Memory high
-BBBBAAAA
-CCCCC
-DDDDD
-AAAA
+AAA
