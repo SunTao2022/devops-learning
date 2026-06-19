@@ -18,3 +18,4 @@ desktop.ini
 __pycache__/
 venv/
 venv/experiments/
+*/venv/
