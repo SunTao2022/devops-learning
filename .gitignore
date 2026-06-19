@@ -17,5 +17,5 @@ desktop.ini
 *.log
 __pycache__/
 venv/
-venv/experiments/
 */venv/
+experiments/*/
