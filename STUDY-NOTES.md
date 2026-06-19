@@ -1053,7 +1053,76 @@ python log_analyzer.py nonexist.log               # 错误提示
 
 ---
 
-## 20. 实验索引
+## 21. Shell 脚本基础
+
+### Shell 脚本是什么
+
+把一堆 Shell 命令写进一个文件，一次执行。
+
+```bash
+# 写进文件 check.sh
+#!/bin/bash
+server="web-01"
+echo "Checking server: $server"
+df -h /c
+
+# 运行
+bash check.sh
+```
+
+### shebang
+
+第一行指定解释器：
+
+```bash
+#!/bin/bash       # bash 解释器
+#!/bin/sh         # sh 解释器
+```
+
+不加也能跑，但加了好习惯。
+
+### 变量
+
+```bash
+name="web-01"         # 赋值（等号两边不能有空格）
+echo $name            # 取值加 $
+echo ${name}          # 也可加花括号
+```
+
+### 参数
+
+| Shell | Python 对应 | 说明 |
+|-------|------------|------|
+| `$1` | `sys.argv[1]` | 第一个参数 |
+| `$2` | `sys.argv[2]` | 第二个参数 |
+| `$@` | `sys.argv[1:]` | 所有参数 |
+| `$#` | `len(sys.argv)-1` | 参数个数 |
+
+### if 条件判断
+
+```bash
+if [ "$status" = "running" ]; then
+    echo "✅"
+elif [ "$status" = "stopped" ]; then
+    echo "❌"
+else
+    echo "❓"
+fi
+```
+
+| Python | Shell |
+|--------|-------|
+| `if x == "y":` | `if [ "$x" = "y" ]; then` |
+| 缩进 | `then/fi` |
+| `elif` | `elif` |
+| `else` | `else` |
+| `==` | `=` |
+
+**注意：** `[ ]` 里面的前后都要有空格。
+
+---
+
+## 22. 实验索引
 
 | 文件名 | 涵盖内容 | 位置 |
 |--------|---------|------|
