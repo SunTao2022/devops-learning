@@ -25,7 +25,16 @@
 14. [Git 基础](#14-git-基础)
 15. [Git 分支与合并](#15-git-分支与合并)
 16. [Git 进阶](#16-git-进阶)
-17. [实验索引](#17-实验索引)
+17. [argparse — 命令行参数](#17-argparse--命令行参数)
+18. [pip / venv — 包管理](#18-pip--venv--包管理)
+19. [项目 1：日志分析器](#19-项目-1--日志分析器log-analyzer)
+20. [项目 2：服务器巡检](#20-项目-2--服务器巡检server-inspector)
+21. [项目 3：Git 批量检查](#21-项目-3--git-批量检查git-batch)
+22. [Shell 脚本基础](#22-shell-脚本基础)
+23. [Linux 用户管理](#23-linux-用户管理)
+24. [Linux 进程管理](#24-linux-进程管理)
+25. [Linux 文件权限](#25-linux-文件权限)
+26. [实验索引](#26-实验索引)
 
 ---
 
@@ -1053,7 +1062,88 @@ python log_analyzer.py nonexist.log               # 错误提示
 
 ---
 
-## 21. Shell 脚本基础
+## 20. 项目 2 — 服务器巡检（Server Inspector）
+
+### 功能
+
+使用 subprocess 调用系统命令，解析输出，判断阈值，生成报告。
+
+```python
+import argparse, subprocess, os, platform
+from tabulate import tabulate
+
+parser = argparse.ArgumentParser(description="Server Inspector")
+parser.add_argument("--disk", action="store_true", help="disk only")
+parser.add_argument("--output", help="export report")
+parser.add_argument("--verbose", action="store_true")
+args = parser.parse_args()
+
+# 获取系统信息
+hostname = platform.uname().node
+system = platform.uname().system
+cpu = os.cpu_count()
+result = subprocess.run(["df", "-h", "/c"], capture_output=True, text=True)
+usage = result.stdout.split("\n")[1].split()[4]
+
+data = [
+    ["Disk Usage", usage],
+    ["Hostname", hostname],
+    ["System", system],
+    ["CPU Cores", str(cpu)],
+]
+print(tabulate(data, headers=["Item", "Value"], tablefmt="grid"))
+
+if args.output:
+    with open(args.output, "w", encoding="utf-8") as f:
+        f.write(tabulate(data, headers=["Item", "Value"], tablefmt="grid"))
+```
+
+---
+
+## 21. 项目 3 — Git 仓库批量检查（Git Batch）
+
+使用 os.walk 扫描目录，subprocess 跑 git status，汇总结果。
+
+```python
+import argparse, subprocess, os
+
+parser = argparse.ArgumentParser(description="Git Batch Checker")
+parser.add_argument("--dir", help="dir to scan")
+parser.add_argument("--verbose", action="store_true")
+parser.add_argument("--output")
+args = parser.parse_args()
+
+search_dir = args.dir if args.dir else os.path.expanduser("~")
+paths = []
+for root, dirs, files in os.walk(search_dir):
+    if ".git" in dirs:
+        paths.append(root)
+        dirs.remove(".git")
+
+report = []
+n, y = 0, 0
+for repo in paths:
+    result = subprocess.run(["git", "status", "--porcelain"],
+        capture_output=True, text=True, cwd=repo)
+    if result.stdout.strip():
+        report.append(f"{repo} ⚠️")
+        n += 1
+    else:
+        report.append(f"{repo} ✅")
+        y += 1
+report.append(f"Total: {len(paths)}, Clean: {y}, Dirty: {n}")
+
+output = "\n".join(report)
+if args.output:
+    with open(args.output, "w", encoding="utf-8") as f:
+        f.write(output + "\n")
+else:
+    print(output)
+```
+
+---
+
+## 22. Shell 脚本基础
 
 ### Shell 脚本是什么
 
