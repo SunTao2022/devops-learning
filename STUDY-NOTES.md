@@ -1122,7 +1122,151 @@ fi
 
 ---
 
-## 22. 实验索引
+## 23. Linux 用户管理
+
+### 用户相关文件
+
+```bash
+/etc/passwd      # 所有用户信息
+/etc/group       # 所有组信息
+```
+
+### /etc/passwd 格式
+
+```
+devops:x:1001:1001::/home/devops:/bin/bash
+   ↑    ↑   ↑    ↑ ↑     ↑          ↑
+用户名  密码 UID  GID 描述  家目录     shell
+```
+
+### 用户管理命令
+
+| 命令 | 作用 | 示例 |
+|------|------|------|
+| `useradd -m -s /bin/bash 用户` | 创建用户 | `useradd -m -s /bin/bash devops` |
+| `passwd 用户` | 设置密码 | `passwd devops` |
+| `echo "user:pw" \| chpasswd` | 批量设密码 | `echo "devops:123" \| chpasswd` |
+| `userdel -r 用户` | 删除用户（含家目录） | `userdel -r devops` |
+| `usermod -aG 组名 用户` | 添加用户到组 | `usermod -aG engineers devops` |
+
+### 组管理
+
+```bash
+groupadd 组名                    # 创建组
+groups 用户                     # 查看用户所属组
+cat /etc/group | grep 组名      # 查看组成员
+```
+
+### su — 切换用户
+
+```bash
+su - 用户名                     # 切换到该用户（含环境变量）
+su - alice -c "命令"            # 以 alice 身份跑一条命令
+```
+
+---
+
+## 24. Linux 进程管理
+
+### 进程查看
+
+```bash
+ps aux                           # 所有进程
+ps aux | grep 进程名             # 搜索特定进程
+```
+
+### ps aux 输出解释
+
+```
+USER   PID  %CPU  %MEM  COMMAND
+root   655  0.0   0.0   sudo su -
+```
+
+| 列 | 意思 |
+|----|------|
+| USER | 谁启动的 |
+| **PID** | **进程ID（杀进程用）** |
+| %CPU | CPU 占用 |
+| %MEM | 内存占用 |
+| COMMAND | 什么程序 |
+
+### kill — 终止进程
+
+```bash
+kill PID                         # 温和终止（SIGTERM）
+kill -9 PID                      # 强制杀死（SIGKILL）
+```
+
+### sleep 与 & 后台执行
+
+```bash
+sleep 60                         # 等 60 秒
+sleep 60 &                       # 后台等 60 秒（不阻塞终端）
+```
+
+`&` 放在命令末尾 → 后台运行，终端不卡住。
+
+### 完整工作流
+
+```bash
+sleep 60 &                       # ① 创建后台进程
+ps aux | grep sleep              # ② 找到 PID
+kill PID                         # ③ 杀掉
+ps aux | grep sleep              # ④ 确认已死
+```
+
+---
+
+## 25. Linux 文件权限
+
+### ls -l 输出解读
+
+```
+-rw-r--r-- 1 root root 6 Jun 20 17:09 file.txt
+│└┬┘└┬┘└┬┘
+│ │   │   └── 其他人权限 (other)
+│ │   └────── 同组权限 (group)
+│ └────────── 所有者权限 (user)
+└──────────── 文件类型 (-=文件, d=目录)
+```
+
+### 权限字母与数字
+
+| 字母 | 含义 | 数字 |
+|------|------|------|
+| `r` | 读 | 4 |
+| `w` | 写 | 2 |
+| `x` | 执行 | 1 |
+| `-` | 无 | 0 |
+
+数字相加：`rwx = 4+2+1 = 7`, `r-x = 4+0+1 = 5`, `r-- = 4+0+0 = 4`
+
+### 常用权限
+
+```bash
+chmod 755 file    # rwxr-xr-x  脚本常见
+chmod 644 file    # rw-r--r--  普通文件
+chmod 600 file    # rw-------  密钥文件（~/.ssh/id_rsa）
+chmod 777 file    # rwxrwxrwx  任何人均可读写（不安全）
+```
+
+### 目录权限
+
+| 目录权限 | 效果 |
+|---------|------|
+| `r` | 可以 `ls` 列出文件名 |
+| `w` | 可创建/删除文件 |
+| `x` | **可以 `cd` 进入目录** |
+
+**关键：** 即使文件权限是 `666`，如果所在目录没有 `x` 权限，其他用户也进不去。
+
+### root 特殊
+
+root 用户**绕过**所有权限检查——root 可以读/写/执行任何文件，不管权限怎么设。
+
+---
+
+## 26. 实验索引
 
 | 文件名 | 涵盖内容 | 位置 |
 |--------|---------|------|
@@ -1139,10 +1283,16 @@ fi
 | day9_practice.py | import 模块测试 | `experiments/` |
 | system_info.py | 综合项目：收集系统信息 | `projects/` |
 | log_analyzer.py | 项目1：argparse + 字典计数 + tabulate | `experiments/` |
+| log_analyzer2.py | 日志分析器（自己重写版） | `experiments/` |
+| server_inspector.py | 项目2：subprocess + 系统信息 | `experiments/` |
+| git_batch.py | 项目3：os.walk + git status | `experiments/` |
+| stats_reporter.py | 复习项目：排序 + wc 统计 | `experiments/` |
+| check.sh | Shell 脚本变量 + 参数 + if 判断 | `experiments/` |
+| review.sh | Shell for 循环 + 函数 | `experiments/` |
 | servers.txt | 练习数据文件（服务器列表） | `experiments/` |
 | app.log | 练习数据文件（日志） | `experiments/` |
 
 ---
 
-> **最后修改：2026-06-16**  
+> **最后修改：2026-06-20**  
 > 每次学完新内容后更新此文档
