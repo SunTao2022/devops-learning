@@ -1,0 +1,2 @@
+server_name = web-01 
+ port = 8080
