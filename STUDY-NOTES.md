@@ -332,11 +332,21 @@ kill 1234                         # 终止（PID）
 kill -9 1234                      # 强制终止
 
 sleep 60 &                        # 后台等 60 秒
-jobs                              # 看后台任务
+jobs                              # 看当前终端的后台任务
 fg %1                             # 拉回前台
-bg %1                             # 放到后台
+bg                                # 放到后台继续
+Ctrl+Z                            # 暂停当前进程
 
 nohup command &                    # 关终端也不中断
+```
+
+**操作序列：**
+```bash
+sleep 30          # 卡住 30 秒
+Ctrl+Z            # 暂停它
+bg                # 后台继续跑
+jobs              # 看状态
+fg %1             # 拉回前台等待结束
 ```
 
 **`&` vs `nohup`：**
@@ -393,6 +403,35 @@ chmod 600 file    # rw-------  密钥文件
 
 ⚠️ **root 绕过所有权限检查**。
 
+### umask — 新建文件默认权限
+
+```bash
+umask                 # 看当前值（通常是 0022）
+touch /tmp/test       # 新建文件默认 644（rw-r--r--）
+umask 077             # 改为更严格
+touch /tmp/test2      # 新建文件默认 600（rw-------）
+```
+
+**公式：** 默认值（文件 666 / 目录 777）− umask = 实际权限。
+
+### setuid — `s` 权限
+
+```bash
+ls -l /usr/bin/passwd
+# -rwsr-xr-x   ← s = setuid
+```
+
+谁运行这个程序，谁就拥有文件所有者的权限。普通用户通过 `passwd` 改密码（需写 `/etc/shadow`）。
+
+### sticky bit — `t` 权限
+
+```bash
+ls -ld /tmp
+# drwxrwxrwt   ← t = sticky bit
+```
+
+任何人都能在 `/tmp` 创建文件，但只能删自己的文件。
+
 ### 2.9 网络命令
 
 ```bash
@@ -413,7 +452,36 @@ curl -s -o /dev/null -w "耗时: %{time_total}s" URL  # 看响应时间
 200 = OK        301/302 = 跳转       404 = 未找到       500 = 服务器错误
 ```
 
-### 2.10 systemctl / journalctl
+### 2.10 Linux 目录结构
+
+```bash
+/                    # 根目录（一切从这里开始）
+/bin                 # 基本命令（ls, cp, mv — 谁都能用）
+/sbin                # 系统管理命令（root 用）
+/etc                 # 系统配置文件
+/etc/resolv.conf     # DNS 配置
+/etc/passwd          # 用户列表
+/etc/hosts           # 本地域名映射
+/home                # 用户家目录（/home/tao）
+/var                 # 变化的数据（日志 /var/log）
+/tmp                 # 临时文件（重启清空）
+/usr                 # 用户程序（/usr/bin, /usr/lib）
+```
+
+**`cat /etc/resolv.conf` 不是"工具"——cat 是程序（在 /bin/cat），/etc/resolv.conf 是文本文件。**
+
+### sudo — 临时借 root 身份
+
+```bash
+sudo apt install nginx        # 装软件 → 需要 sudo
+ls /home                      # 看自己文件 → 不需要
+```
+
+**判断规则：** 只涉及自己文件/进程 → 不用 sudo。改系统范围的东西（装软件、改配置、管理用户）→ 必须 sudo。
+
+**`sudo su -`** = 变成 root 用户，之后不用每次打 sudo。
+
+### 2.11 systemctl / journalctl
 
 ```bash
 systemctl status 服务名        # 看状态
@@ -676,8 +744,9 @@ vms = json.loads(result.stdout)
 | `exercises/python/argparse_practice.py` | argparse 基础 |
 | `exercises/python/port_check.py` | argparse 综合 |
 | `exercises/python/find_servers.py` | sys.argv + 文件 I/O |
-| `exercises/python/review.py` | subprocess + tabulate 综合 |
-| `exercises/python/config_check.py` | argparse + 文件读取 |
+| `experiments/review.py` | subprocess + tabulate 综合 |
+| `experiments/config_check.py` | 配置文件解析 |
+| `experiments/filter_logs.py` | 按级别和日期过滤日志 |
 
 ### Shell 练习
 

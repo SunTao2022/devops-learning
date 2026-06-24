@@ -21,6 +21,7 @@ if argus.output:
     try:
         with open(argus.output , "w") as f:
             f.write(table)
+            
     except FileNotFoundError:
         print("FileNotFoundError")
 

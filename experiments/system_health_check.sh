@@ -1,5 +1,8 @@
 #!/bin/sh
 
+
+
+
 disk=$1
 
 usage=$(df -h "$disk"| tail -1 | awk '{print $5}' | tr -d '%')

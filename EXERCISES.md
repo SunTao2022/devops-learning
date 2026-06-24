@@ -829,4 +829,62 @@ A：`table` 在 `if not vms:` 的分支里没定义，但后面 `if args.output:
 
 ---
 
+### 3.7 filter_logs.py — 按日期和级别过滤日志
+
+### 题目
+
+写 `filter_logs.py`，读取 `app.log`，接收 `--level` 和 `--since`（起始日期），输出匹配行。
+
+### 答案
+
+```python
+import argparse
+from tabulate import tabulate
+
+parser = argparse.ArgumentParser(description="log filter tool")
+parser.add_argument("file", help="log to filter")
+parser.add_argument("--level", help="event level")
+parser.add_argument("--since", help="start date (YYYY-MM-DD)")
+parser.add_argument("--output", help="export report")
+parser.add_argument("--verbose", action="store_true")
+args = parser.parse_args()
+
+try:
+    with open(args.file, "r") as f:
+        result = []
+        for line in f:
+            parts = line.strip().split()
+            if len(parts) < 2:
+                continue
+            if args.level and parts[1] != args.level:
+                continue
+            if args.since and args.since > parts[0]:
+                continue
+            result.append(line.strip())
+
+        rows = [[r] for r in result]
+        table = tabulate(rows, headers=["Log Entry"], tablefmt="grid")
+        print(table)
+
+        if args.output:
+            with open(args.output, "w") as f:
+                f.write(table + "\n")
+
+except FileNotFoundError:
+    print("File not found")
+```
+
+### 解析
+
+- 日期比较：`YYYY-MM-DD` 格式的字符串可以直接用 `>=` 比较
+- 空行跳过：`if len(parts) < 2: continue`
+- 先过滤 `--level`，再过滤 `--since`，再追加结果
+
+### Q&A
+
+**Q：`tabulate` 的 headers 和数据的列数要对齐吗？**
+A：对。数据每行有 1 列 → headers 也要 1 个。数据每行有 3 列 → headers 给 3 个。
+
+---
+
 > **完整版笔记 | 持续更新中**
