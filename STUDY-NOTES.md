@@ -603,6 +603,50 @@ echo "全部完成"
 - `1` = stdout（正常输出）
 - `2` = stderr（错误信息）
 
+### 3.7 getopt — 高级参数解析
+
+```bash
+#!/bin/bash
+ARGS=$(getopt -o f:v --long file:,verbose -n "$0" -- "$@")
+eval set -- "$ARGS"
+
+while true; do
+    case "$1" in
+        -f|--file)    echo "File: $2"; shift 2 ;;
+        -v|--verbose) echo "Verbose"; shift ;;
+        --)           shift; break ;;
+        *)            echo "Unknown"; exit 1 ;;
+    esac
+done
+```
+
+| 部分 | 意思 |
+|------|------|
+| `-o f:v` | 短选项：`-f` 带值，`-v` 开关 |
+| `--long file:,verbose` | 长选项：`--file` 带值，`--verbose` 开关 |
+| `shift` | 吃掉当前参数 |
+| `shift 2` | 吃掉选项 + 值（两个） |
+| `--` | 参数结束标记 |
+
+**记忆规则：**
+- 开关（无值）→ `shift`（丢 1 个）
+- 带值参数 → `shift 2`（丢 2 个）
+
+### 3.8 信号处理 — trap
+
+```bash
+trap "echo '被 Ctrl+C 中断了'; exit" INT     # Ctrl+C 触发
+trap "echo '命令失败'" ERR                    # 任何命令失败触发
+trap clean_up EXIT                            # 脚本退出时触发
+```
+
+| 信号 | 触发时机 |
+|------|---------|
+| `INT` | 按 Ctrl+C |
+| `TERM` | 被 kill 终止 |
+| `ERR` | 任何命令返回非 0 |
+| `EXIT` | 脚本退出（无论成功失败） |
+
 ---
 
 ## 4. Git
@@ -727,6 +771,43 @@ result = subprocess.run("az vm list", shell=True, capture_output=True, text=True
 vms = json.loads(result.stdout)
 ```
 
+### 5.2 VM 生命周期（完整命令链）
+
+```bash
+# 创建（开始计费）
+az vm create -n 名字 -g 组 --image Ubuntu2404 --size Standard_B2ts_v2 --admin-username azureuser --generate-ssh-keys --location canadacentral
+
+# 查看状态
+az vm show -n 名字 -g 组
+az vm get-instance-view -n 名字 -g 组 --query "instanceView.statuses[?starts_with(code, 'PowerState/')]" -o table
+
+# 启动
+az vm start -n 名字 -g 组
+
+# 停止计费（关机，磁盘还留着）
+az vm deallocate -n 名字 -g 组
+
+# 删除 VM（磁盘单独留着，还收费）
+az vm delete -n 名字 -g 组 --yes
+
+# 删除资源组（连同所有资源，彻底停止计费）
+az group delete -n 组名 --yes
+```
+
+**计费规则：**
+- `deallocate` = 停止计费，只收磁盘费（约 $0.5-1/月）
+- `delete VM` = 删机器，磁盘保留
+- `delete group` = 连磁盘一起删，完全停计费
+
+### 5.3 测试用规格
+
+| 规格 | vCPU | 内存 | 月费 |
+|------|------|------|------|
+| `Standard_B2ts_v2` | 2 | 1G | ~$15 |
+| `Standard_B1s` | 1 | 1G | ~$5（部分区域无货） |
+
+选择最低可用规格，学完立刻删除。
+
 ---
 
 ## 6. 实验索引
@@ -770,6 +851,10 @@ vms = json.loads(result.stdout)
 | `projects/git_batch.py` | os.walk + git status |
 | `projects/stats_reporter.py` | 排序 + wc |
 | `projects/azure_vm_checker.py` | az CLI + json |
+| `experiments/server_health_reporter.py` | subprocess + 系统健康检查 |
+| `experiments/log_report.py` | wc + 字典计数 + tabulate |
+| `experiments/log_parser.py` | re.findall + IP 统计 |
+| `experiments/args_demo.sh` | getopt 参数解析 |
 
 ### 数据文件
 
