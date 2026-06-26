@@ -887,4 +887,162 @@ A：对。数据每行有 1 列 → headers 也要 1 个。数据每行有 3 列
 
 ---
 
+### 3.8 log_parser.py — 正则提取 IP 并统计
+
+### 题目
+
+从 `app.log` 提取所有 IP 地址（格式 X.X.X.X），统计每个 IP 出现次数，输出表格。
+
+### 答案
+
+```python
+import argparse, re
+from tabulate import tabulate
+
+parser = argparse.ArgumentParser(description="log parser tool")
+parser.add_argument("file", help="log file to parse")
+parser.add_argument("--output", help="export report")
+parser.add_argument("--verbose", action="store_true")
+args = parser.parse_args()
+
+ips_account = {}
+with open(args.file, "r") as f:
+    for line in f:
+        for found_ip in re.findall(r"\d+\.\d+\.\d+\.\d+", line):
+            ips_account[found_ip] = ips_account.get(found_ip, 0) + 1
+
+table = tabulate(ips_account.items(), headers=["IP", "Count"], tablefmt="grid")
+print(table)
+
+if args.output:
+    with open(args.output, "w") as f:
+        f.write(table)
+```
+
+### 解析
+
+- `re.findall(r"\d+\.\d+\.\d+\.\d+", line)` 返回列表 → 必须遍历
+- `counts[ip] = counts.get(ip, 0) + 1` 是计数模式
+- `tabulate(dict.items())` 直接可输出
+
+### Q&A
+
+**Q：为什么 `ips_account[ip] = ...` 的循环缩进要在 `with` 里面？**
+A：如果缩进在外面，只处理最后一行。里面才能逐行处理每一行匹配的 IP。
+
+---
+
+### 3.9 log_report.py — 日志级别统计报告
+
+### 题目
+
+读取日志文件，统计每个级别（INFO/ERROR/WARN）出现次数，生成表格，支持 `--format markdown` 和 `--output`。
+
+### 答案
+
+```python
+import argparse, subprocess
+from tabulate import tabulate
+
+parser = argparse.ArgumentParser(description="log report tool")
+parser.add_argument("file", help="log file")
+parser.add_argument("--format", help="markdown format")
+parser.add_argument("--output", help="export")
+parser.add_argument("--verbose", action="store_true")
+args = parser.parse_args()
+
+lines = subprocess.run(["wc", "-l", args.file], capture_output=True, text=True)
+if args.verbose:
+    print(f"Total lines: {lines.stdout.strip().split()[0]}")
+
+counts = {}
+with open(args.file, "r") as f:
+    for line in f:
+        parts = line.strip().split()
+        if len(parts) < 2:
+            continue
+        level = parts[1]
+        counts[level] = counts.get(level, 0) + 1
+
+fmt = "pipe" if args.format == "markdown" else "grid"
+table = tabulate(counts.items(), headers=["Level", "Count"], tablefmt=fmt)
+print(table)
+
+if args.output:
+    with open(args.output, "w") as f:
+        f.write(table + "\n")
+```
+
+### 解析
+
+- `wc -l` 用 `subprocess.run` + `capture_output=True` 拿到总行数
+- `{k, v}` 直接输出给 `tabulate`
+- `--format` 只在输出和文件生效，控制台默认 grid
+
+---
+
+### 3.10 server_health_reporter.py — 系统健康检查
+
+### 题目
+
+用 subprocess 收集系统信息，输出健康报告表格。
+
+### 答案
+
+```python
+import argparse, subprocess
+from tabulate import tabulate
+
+parser = argparse.ArgumentParser(description="server health reporter")
+parser.add_argument("--format", help="markdown format")
+parser.add_argument("--output", help="export")
+parser.add_argument("--verbose", action="store_true")
+args = parser.parse_args()
+
+result = {}
+
+# 磁盘（df -h）
+disk_out = subprocess.run(["df", "-h", "/"], capture_output=True, text=True).stdout
+result["disk"] = disk_out.strip().split("\n")[1].split()[4]
+
+# 内存（free -m）
+mem_out = subprocess.run(["free", "-m"], capture_output=True, text=True).stdout
+mem_line = [l for l in mem_out.strip().split("\n") if l.startswith("Mem:")][0]
+total = int(mem_line.split()[1])
+available = int(mem_line.split()[6])
+result["mem"] = f"{(1 - available / total) * 100:.1f}%"
+
+# uptime
+uptime_out = subprocess.run(["uptime"], capture_output=True, text=True).stdout
+result["uptime"] = uptime_out.strip().split()[2]
+
+# 登录用户数（who -q）
+who_out = subprocess.run(["who", "-q"], capture_output=True, text=True).stdout
+result["users"] = who_out.strip().split("\n")[-1].split("=")[1]
+
+fmt = "pipe" if args.format == "markdown" else "grid"
+table = tabulate(result.items(), headers=["Metric", "Value"], tablefmt=fmt)
+print(table)
+
+if args.output:
+    with open(args.output, "w") as f:
+        f.write(table + "\n")
+```
+
+### 解析
+
+| 命令 | 取哪一行 | 取哪一列 |
+|------|---------|---------|
+| `df -h /` | 第 2 行（去掉表头） | 第 5 列（Use%） |
+| `free -m` | 找到 `Mem:` 开头的那行 | [1]=total, [6]=available |
+| `uptime` | `split()` | [2] = load 数字 |
+| `who -q` | 最后一行（`strip().split("\n")[-1]`） | `split("=")[1]` |
+
+### Q&A
+
+**Q：`df -h` 输出里为什么列数 `[4]` 不是 `[5]`？**
+A：`df -h /` 的第一列是 `Filesystem`（索引 0），`Size`（1），`Used`（2），`Avail`（3），`Use%`（4），`Mounted on`（5）。所以 Use% 是 `[4]`。
+
+---
+
 > **完整版笔记 | 持续更新中**
