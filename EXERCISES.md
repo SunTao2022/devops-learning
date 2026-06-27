@@ -1040,9 +1040,114 @@ if args.output:
 
 ### Q&A
 
-**Q：`df -h` 输出里为什么列数 `[4]` 不是 `[5]`？**
+**Q：`df -h /` 输出里为什么列数 `[4]` 不是 `[5]`？**
 A：`df -h /` 的第一列是 `Filesystem`（索引 0），`Size`（1），`Used`（2），`Avail`（3），`Use%`（4），`Mounted on`（5）。所以 Use% 是 `[4]`。
 
 ---
 
+### 3.11 LeetCode 综合练习（字典 / 集合 / 文件解析）
+
+### 题 1：字典计数
+
+```python
+servers = ["web-01", "db-01", "web-01", "cache-01", "db-01", "web-01"]
+count = {}
+for s in servers:
+    count[s] = count.get(s, 0) + 1
+for k, v in count.items():
+    print(f"{k:<10} {v}")
+```
+
+### 题 2：解析 df 输出取最大使用率
+
+```python
+output = """Filesystem      Size  Used Avail Use% Mounted on
+/dev/root        29G  1.7G   27G   6% /
+tmpfs           446M     0  446M   0% /dev/shm
+/dev/sda16      881M   64M  756M   8% /boot"""
+
+max_pct = 0
+max_name = ""
+for line in output.strip().split("\n")[1:]:
+    parts = line.split()
+    pct = float(parts[4].strip("%"))
+    if pct > max_pct:
+        max_pct = pct
+        max_name = parts[0]
+print(f"{max_name} : {max_pct}%")
+```
+
+### 题 3：集合差集
+
+```python
+all_servers = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
+online = ["10.0.0.1", "10.0.0.3"]
+offline = set(all_servers) - set(online)
+for ip in offline:
+    print(ip)
+```
+
+---
+
+### 3.12 vm_batch.py — Azure VM 批量启停
+
+### 题目
+
+写一个脚本读取 `servers.txt`，根据 `--action start|stop` 批量操作 VM，用 `tabulate` 输出结果。
+
+### 答案框架
+
+```python
+import argparse, subprocess
+from tabulate import tabulate
+
+parser = argparse.ArgumentParser(description="VM batch")
+parser.add_argument("file", help="vm list file")
+parser.add_argument("action", help="start or deallocate")
+parser.add_argument("group", help="resource group")
+parser.add_argument("--verbose", action="store_true")
+parser.add_argument("--output", help="export")
+args = parser.parse_args()
+
+status = {}
+try:
+    with open(args.file) as f:
+        for line in f:
+            server = line.strip()
+            if not server:
+                continue
+            if args.verbose:
+                print(f"Processing {server}...")
+            result = subprocess.run(
+                ["az", "vm", args.action, "-n", server, "-g", args.group],
+                capture_output=True, text=True
+            )
+            if result.returncode == 0:
+                r = subprocess.run(
+                    ["az", "vm", "show", "-n", server, "-g", args.group,
+                     "--query", "powerState", "-o", "tsv"],
+                    capture_output=True, text=True
+                )
+                state = r.stdout.strip() if r.returncode == 0 else "query failed"
+            else:
+                state = "Action failed"
+            status[server] = state
+    table = tabulate(status.items(), headers=["name", "status"], tablefmt="grid")
+    print(table)
+    if args.output:
+        with open(args.output, "w") as f:
+            f.write(table + "\n")
+except FileNotFoundError:
+    print("FileNotFoundError")
+```
+
+### Q&A
+
+**Q：为什么 `result_status` 可能在 `else` 分支未定义？**
+A：`if result_action.returncode == 0` 执行了才赋值，否则走 else。如果 else 里没赋值，`status[server] = result_status` 会报 NameError。
+
+**Q：`status[server] = result_status` 为什么要在循环里面？**
+A：每个 server 的状态不同，要在处理完每个 VM 后立刻保存，否则只有最后一行有效。
+
+---
 > **完整版笔记 | 持续更新中**

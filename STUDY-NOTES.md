@@ -647,6 +647,35 @@ trap clean_up EXIT                            # 脚本退出时触发
 | `ERR` | 任何命令返回非 0 |
 | `EXIT` | 脚本退出（无论成功失败） |
 
+### Python 综合练习：字典、集合、文件解析
+
+#### 字典计数模式
+
+```python
+count = {}
+for item in items:
+    count[item] = count.get(item, 0) + 1
+```
+
+`get(key, 0)` 保证找不到时返回 0，避免 KeyError。
+
+#### 集合差集
+
+```python
+offline = set(all) - set(online)
+```
+
+比 `for...in...not in` 效率更高（O(n+m) vs O(n*m)）。
+
+#### float 转换注意
+
+带 `%` 的字符串不能直接 `float()`：
+
+```python
+float("6%")   # ValueError
+float("6".strip("%"))   # 6.0 ✅
+```
+
 ---
 
 ## 4. Git
