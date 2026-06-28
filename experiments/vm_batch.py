@@ -15,22 +15,45 @@ try:
             server = line.strip()
             if args.verbose:
                 print(f"Processing {server}...")
-            result_action = subprocess.run(["az" , "vm" , args.action , "-n" , server , "-g" , args.group] , capture_output=True , text=True )
-            if result_action.returncode == 0:
+            if args.verbose:
+                print("you need login first")
+            if args.action == "start":
+                result_action = subprocess.run(["az" , "vm" , args.action , "-n" , server , "-g" , args.group] , capture_output=True , text=True )
+                if result_action.returncode == 0:
+                    print("start successful")    
+                else:
+                    print("action failed") 
+                    result_status = "Action failed"
+                    status[server] = result_status  
+            elif args.action == "deallocate":         
+                result_action = subprocess.run(["az" , "vm" , args.action , "-n" , server , "-g" , args.group] , capture_output=True , text=True )
+                if result_action.returncode == 0:
+                    print("deallocate successful")    
+                else:
+                    print("action failed")
+                    result_status = "Action failed"
+                    status[server] = result_status       
+            elif args.action == "create":          
+                result_action = subprocess.run(["az" , "vm" , args.action , "-n" , server , "-g" , args.group , "image" , "Ubuntu2024" , "size" , "Standard_B2ts_V2" , "admin-username" , "admin" , "generate-ssh-keys" , "location" , "canadacentral"] , capture_output=True , text=True )
+                if result_action.returncode == 0:
+                    print("create successful")    
+                else:
+                    print("action failed") 
+                    result_status = "Action failed"
+                    status[server] = result_status      
+            elif args.action == "status": 
                 result_status_text = subprocess.run(["az" , "vm" , "show" , "-n" , server , "-g" , args.group , "--query" , "powerState" , "-o" , "tsv"] , capture_output=True , text=True )
                 result_status = result_status_text.stdout.strip()
                 if result_status_text.returncode == 0:
                     print("get status successful")
                 else:
                     print("get status error")
-            else:
-                print("action failed")
-                result_status = "Action failed"
-            status[server] = result_status
-    table = tabulate(status.items() , headers=["name" , "status"] , tablefmt="grid")
-    print(table)
-    if args.output:
-        with open(args.output, "w") as f:
-            f.write(table + "\n")
+                    result_status = "Action failed"
+        status[server] = result_status
+        table = tabulate(status.items() , headers=["name" , "status"] , tablefmt="grid")
+        print(table)
+        if args.output:
+            with open(args.output, "w") as f:
+                f.write(table + "\n")
 except FileNotFoundError:
      print("FileNotFoundError")
