@@ -36,4 +36,5 @@ for log in logs:
 table = tabulate(result.items() , headers=["item" , "action"] , tablefmt="grid")
 if args.verbose:
     print("ganerating table")
+    
 print(table)
