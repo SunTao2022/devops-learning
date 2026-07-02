@@ -839,7 +839,199 @@ az group delete -n 组名 --yes
 
 ---
 
-## 6. 实验索引
+## 6. Terraform
+
+### 6.1 模块化架构（Module）
+
+```
+terraform-leaning/
+├── main.tf                  ← 资源编排 + module 调用
+├── variables.tf             ← 项目输入变量
+├── outputs.tf               ← 项目输出
+├── provider.tf              ← provider 配置
+├── modules/
+│   ├── networking/
+│   │   ├── main.tf          ← VNet, Subnet, NSG, NSG association
+│   │   ├── variables.tf     ← module 输入接口（无 default，调用方必须传）
+│   │   └── outputs.tf       ← 暴露给调用方的值
+│   └── compute/
+│       ├── main.tf          ← PIP, NIC, VM
+│       ├── variables.tf
+│       └── outputs.tf
+```
+
+**两个 `variables.tf` 完全独立，作用不同：**
+
+| 文件 | 角色 | 必须有 default? |
+|------|------|----------------|
+| 根目录 `variables.tf` | 定义变量值 | ✅ 有 default |
+| module 的 `variables.tf` | 声明接收接口 | ❌ 无 default，调用方必须传 |
+
+**信息流：**
+```
+根目录 variables.tf
+  variable "vnet_name" { default = "terraform-vnet" }
+  ↓ var.vnet_name = "terraform-vnet"
+
+根目录 main.tf
+  module "networking" {
+    vnet_name = var.vnet_name      # 传值
+  }
+  ↓
+networking module
+  variable "vnet_name" { }         # 接收声明
+  ↓ var.vnet_name = "terraform-vnet"（从调用方拿到）
+```
+
+---
+
+### 6.2 `count` vs `for_each`
+
+| 特性 | `count` | `for_each` |
+|------|---------|-----------|
+| 适用场景 | 固定数量、相同配置的资源 | 差异化配置的资源 |
+| 索引方式 | `count.index`（整数） | `each.key` / `each.value` |
+| 资源引用 | `resource[count.index]` | `resource[each.key]` |
+| 输出语法 | `resource[*].attribute` | `{ for k, v in resource : k => v.attribute }` |
+| 实例名称 | `vm[0]`, `vm[1]`（位置命名） | `vm["vm_0"]`, `vm["vm_1"]`（key 命名） |
+
+**`each.key` 和 `each.value`：**
+```hcl
+variable "vm_configs" {
+  default = {
+    "vm_0" = {                    # each.key = "vm_0"
+      vm_name = "terraform-vm-0"  # each.value.vm_name
+      vm_size = "Standard_B2ts_v2"
+    }
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "vm" {
+  for_each = var.vm_configs
+  name     = each.value.vm_name   # each.value 是整个 object
+}
+```
+
+---
+
+### 6.3 `dynamic` 块（一个 NSG 多条规则）
+
+Azure 限制：**一个 Subnet 只能绑定一个 NSG**。多个端口不能创建多个 NSG，要用 dynamic block 在一个 NSG 里生成多条 rule。
+
+```hcl
+variable "ssh_ports" {
+  type    = list(number)
+  default = [22]
+}
+
+resource "azurerm_network_security_group" "nsg" {
+  name                = var.nsg_name
+  location            = var.rg_location
+  resource_group_name = var.rg_name
+
+  dynamic "security_rule" {
+    for_each = var.ssh_ports
+    content {
+      name                   = "allow-ssh-${security_rule.value}"
+      priority               = 100 + security_rule.key
+      direction              = "Inbound"
+      access                 = "Allow"
+      protocol               = "Tcp"
+      source_port_range      = "*"
+      destination_port_range = tostring(security_rule.value)
+      source_address_prefix  = "*"
+      destination_address_prefix = "*"
+    }
+  }
+}
+```
+
+输入 `ssh_ports = [22, 2222]` 生成：
+
+```
+security_rule {
+  name = "allow-ssh-22"
+  priority = 100
+  destination_port_range = "22"
+}
+
+security_rule {
+  name = "allow-ssh-2222"
+  priority = 101
+  destination_port_range = "2222"
+}
+```
+
+---
+
+### 6.4 Output 转发
+
+**Module output = "我加工好结果，调用方直接用"**
+
+```hcl
+# modules/compute/outputs.tf
+output "vm_public_ips" {
+  value = { for k, v in azurerm_public_ip.vm_ip : k => v.ip_address }
+}
+
+# 根目录 outputs.tf（直接转发，不需要再加参数）
+output "vm_public_ips" {
+  value = module.compute.vm_public_ips
+}
+```
+
+---
+
+### 6.5 State 管理铁律
+
+```
+terraform destroy  → 同步删除 Azure 资源 + 清理 state ✅
+az group delete   → 只删 Azure，state 不知道 ❌
+```
+
+手动删资源后的后果：
+- Terraform state 还记着这些资源
+- 下次 `plan` 报 "Objects have changed outside of Terraform"
+- 进入"state 不对齐 → import 失败 → 继续 apply → 更乱"的恶性循环
+
+**唯一修复：** `rm -f terraform.tfstate && terraform init -reconfigure`
+
+**什么时候可以手动删：**
+- `terraform destroy` 本身走不通（state backend 锁死、provider 认证失效）
+- 手动删完后必须同步清理 state
+
+---
+
+### 6.6 常见错误速查
+
+| 错误 | 原因 | 修复 |
+|------|------|------|
+| `each.value cannot be used in this context` | 用了 `for_each` 的资源改成 `count` 后没清干净 | 改成 `count.index` + `var.xxx` |
+| `Unsupported argument` | 变量名拼写错 | Terraform 会提示 "Did you mean ...?" |
+| `Unsupported attribute` | 引用 module output 时名字写错 | module output 只能用 `outputs.tf` 里定义的 output 名 |
+| `Invalid reference` | 资源引用顺序错 | 格式：`type.name[*].attribute`，不是 `type[*].name.attr` |
+| `association needs to be imported` | 资源已存在但 state 没记录 | `terraform import` 或清 state 重来 |
+| `SkuNotAvailable` | 该 SKU 在该区域容量不足 | 换 `Standard_B2ts_v2`（已验证可用） |
+| `rg_loacation` typo | 拼写错误 | 统一用 `rg_location` |
+
+---
+
+### 6.7 关键命令速查
+
+```bash
+terraform init            # 初始化（backend + provider）
+terraform fmt             # 格式化当前目录
+terraform fmt -recursive  # 格式化所有子目录
+terraform plan            # 预览变更
+terraform apply           # 执行变更
+terraform destroy         # 清掉所有资源（同步清理 state）
+terraform state list      # 查看 state 里有什么
+terraform import          # 把已存在的 Azure 资源登记到 state
+```
+
+---
+
+## 7. 实验索引
 
 ### Python 练习
 

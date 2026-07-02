@@ -1,11 +1,11 @@
-# DevOps/SRE 学习计划 · 6 个月冲刺加拿大就业
+# DevOps/SRE 学习计划 · 目标 2027 年 4 月加拿大就业
 
 > **学习者**：Tao（CCNP + AZ-104）
 > **目标**：加拿大 DevOps / SRE / Cloud Admin 岗位
-> **周期**：2026 年 6 月 — 11 月（6 个月）
+> **周期**：2026 年 6 月 — 2027 年 4 月（灵活，以学会为准，不赶进度）
 > **每日投入**：≥4 小时（工作日 2.5h 学习 + 1.5h 实验，周末 6h 项目 + 复习）
 > **休息**：每周日（避免 burnout）
-> **AI 辅助**：DeepSeek V4（主模型）+ Gemma4:12b（本地副手）
+> **AI 辅助**：Hermes Agent（主模型）
 
 ---
 
@@ -26,10 +26,10 @@
 ## 一、总体路线图
 
 ```
-月 1 (6月)         月 2 (7月)         月 3 (8月)         月 4 (9月)        月 5 (10月)        月 6 (11月)
+月 1 (6-7月)      月 2 (7-8月)      月 3 (8-9月)      月 4 (9-10月)     月 5 (10-11月)    月 6-9 (11月-4月)
 ┌──────────┐      ┌──────────┐      ┌──────────┐      ┌──────────┐      ┌──────────┐      ┌──────────┐
 │ Python   │ ──→  │Terraform │ ──→  │ Docker   │ ──→  │ CI/CD    │ ──→  │ 综合项目  │ ──→  │ 简历优化  │
-│ Linux    │      │ Ansible  │      │ K8s      │      │ 监控     │      │ 多环境   │      │ 模拟面试  │
+│ Linux    │      │ GitOps   │      │ K8s      │      │ 监控     │      │ 多环境   │      │ 模拟面试  │
 │ Git      │      │ 基础实验  │      │ 容器编排  │      │ 可观测性  │      │ 端到端   │      │ 求职投递  │
 └──────────┘      └──────────┘      └──────────┘      └──────────┘      └──────────┘      └──────────┘
      ↓                  ↓                  ↓                  ↓                  ↓                  ↓
@@ -114,8 +114,8 @@
 
 ## 三、第 2 月：Terraform + Ansible（IaC 入门）
 
-> **目标**：掌握 Terraform 声明式基础设施管理和 Ansible 配置管理，能用 IaC 在 Azure 上部署完整环境
-> **工具**：Terraform、Ansible、Azure 订阅
+> **目标**：掌握 Terraform 声明式基础设施管理；Ansible 了解概念即可，不深入；为 Kubernetes 和 GitOps 打基础
+> **工具**：Terraform、Azure 订阅、Docker、kubectl
 
 ### 第 5 周：Terraform 基础
 
@@ -129,48 +129,52 @@
 | 周六 | **周末项目**：用 Terraform 部署 2 台 VM（含 NSG、负载均衡器） | — | README + 架构图 | — |
 | 周日 | 休息 | — | — | — |
 
-### 第 6 周：Ansible 基础
+### 第 6 周：Ansible 入门（1 天快速了解）
+> **目标**：理解 Ansible 核心概念，能读懂简单 playbook，不追求精通
+> **说明**：Ansible 在云原生/PaaS 场景的重要性下降，压缩为 1 天概念学习，后续按需深入
 
-| 日期 | 学习内容 (1h) | 实验 (1.5h) | Git 操作 | 复习 |
+|| 日期 | 学习内容 (1h) | 实验 (1.5h) | Git 操作 | 复习 ||
 |------|-------------|------------|---------|------|
-| 周一 | Ansible 架构、inventory（静态/动态）、ad-hoc 命令 | ansible ping all，用 ad-hoc 安装 nginx | 新建 ansible-learning 仓库 | Terraform 状态管理 |
-| 周二 | playbook 基础（hosts, tasks, module） | 写 playbook：安装 nginx + 启动 + 配置网页 | 仓库结构规范化 | Linux systemctl |
-| 周三 | variable（group_vars, host_vars）、template（Jinja2） | 用 Jinja2 模板生成 nginx 配置 | .gitignore for ansible | Python 字符串格式化 |
-|周四 | handler、notify、tag、when 条件判断 | 配置防火墙规则 + 重启服务 | playbook 语法 lint（ansible-lint） | 正则表达式 |
-| 周五 | roles（角色化、ansible-galaxy） | 重构为 roles：common, webserver, firewall | galaxy.yml | Git stash |
-| 周六 | **周末项目**：用 Ansible 配置 2 台 VM，安装 Nginx + 自定义页面 + 防火墙 | — | ansible.cfg 优化 | — |
+| 周一 | Ansible 架构（control node/managed node）、inventory 静态/动态、ad-hoc 命令 | ansible ping all，ad-hoc 安装/卸载 nginx | 新建 ansible-learning 仓库 | Terraform state 管理 |
+| 周二 | **Terraform 模块化深化**：创建 vnet 模块、vm 模块，模块输出复用 | 将现有 VNet+VM 代码拆成可复用模块 | git submodule 概念 | Ansible 概念回顾 |
+| 周三 | Terraform plan / apply / destroy 工作流 + Makefile | 完整部署：RG → VNet → VM → destroy，封装常用命令 | 写 Makefile | Python subprocess |
+| 周四 | **Kubernetes 概念入门**（提前开始）| K8s 架构、Pod/Deployment/Service/Namespace 概念 | 新建 k8s-learning 仓库 | 本周全部复习 |
+| 周五 | **GitOps 入门**：ArgoCD/FluxCD 工作流、Git 作为唯一真相源 | 画一幅 GitOps 流水线架构图，对比 Ansible 配置方式 | GitOps 学习笔记提交 | K8s 架构 |
+| 周六 | **周末项目**：用 Terraform 部署 2 台 VM（含 NSG），并绘制 GitOps 流水线架构图 | — | README + 架构图 | — |
 | 周日 | 休息 | — | — | — |
 
-### 第 7 周：Terraform + Ansible 集成
+### 第 7 周：Terraform 深化 + GitOps 动手实践
+> **目标**：掌握 Terraform remote state 和模块化；亲手部署 GitOps 流水线，理解 Platform Engineering 工作方式
 
-| 日期 | 学习内容 | 实验 | 达到目的 |
-|------|---------|------|---------|
-| 周一 | Terraform 输出 → Ansible inventory（local_file + template） | Terraform 生成 inventory 文件 | 打通 IaC 工具链 |
-| 周二 | Ansible 动态 inventory（azure_rm.py/azure_rm.yml） | 配置 Azure 动态 inventory | 掌握动态资源发现 |
-| 周三 | Terraform provisioner（remote-exec, file）vs Ansible 对比 | 对比分析两种配置方式 | 理解工具边界 |
-| 周四 | 错误处理：Terraform 错误重试、Ansible 幂等性 | 制造断网/资源冲突场景并修复 | 掌握 IaC 排障 |
-| 周五 | 安全实践：Terraform 敏感变量、Ansible Vault | 用 Vault 加密 secrets | 掌握密钥管理 |
-| 周六 | **周末项目**：Terraform 部署 → Ansible 配置，完整端到端 | — | IaC 全流程跑通 |
-| 周日 | 休息 | — | 恢复 |
+|| 日期 | 学习内容 (1h) | 实验 (1.5h) | Git 操作 | 复习 |
+|------|-------------|------------|---------|------|
+| 周一 | Terraform remote state（Azure Storage backend）、state lock | 配置 remote backend，state 文件存到 Azure Storage（用独立 RG） | gitignore tfstate 更新 | Git rebase |
+| 周二 | Terraform module 高级：动态块（dynamic block）、生命周期（lifecycle）| 在 NSG 用 dynamic block 生成多 rule；prevent_destroy 保护关键资源 | git submodule 或 terraform registry | Shell 函数 |
+| 周三 | 安全实践：Terraform 敏感变量、state 加密 | 用 terraform.tfvars + .gitignore 管理 secrets；sensitive = true | secrets 不进 git | Python 字符串格式化 |
+| 周四 | GitOps 动手：安装 ArgoCD 到 Minikube | 手动部署 ArgoCD，创建 Application 自动同步 Git repo | GitOps 学习笔记提交 | K8s 架构 |
+| 周五 | GitOps 工作流：Application、Sync 策略、自愈 | 修改 Git repo 中的 K8s manifest，观察 ArgoCD 自动同步 | 提交 manifest 变更 | 正则表达式 |
+| 周六 | **周末项目**：模块化 Terraform + 手动 GitOps 流水线（代码 → ArgoCD → K8s） | — | 模块化仓库结构 | — |
+| 周日 | 休息 | — | 恢复 | — |
 
 ### 第 8 周：复习 + 月底项目
-
-> **项目交付**：用 Terraform 部署 Azure 环境（VNet + 2 VM + LB），Ansible 配置 Nginx 集群，展示负载均衡效果
+### 第 8 周：复习 + 月底项目
+> **项目交付**：用 Terraform 模块化部署 Azure 环境（VNet + 2 VM + NSG），配置 ArgoCD GitOps 流水线部署应用到 Minikube，展示 Platform Engineering 完整流程
+> **说明**：Ansible 配置管理作为可选加分项，不强制要求；重点展示 Git 驱动的基础设施和应用交付
 
 ### 第 2 月达到的里程碑 ✅
 
-- [ ] 能用 Terraform 创建完整的 Azure 基础设施
-- [ ] 能用 Ansible 完成服务器配置管理
-- [ ] 掌握 Terraform + Ansible 集成（静态/动态 inventory）
-- [ ] 理解 IaC 的最佳实践（状态管理、模块化、密钥安全）
-- [ ] GitHub 上有结构良好的 IaC 项目仓库
+- [x] 能用 Terraform 创建完整的 Azure 基础设施（RG / VNet / Subnet / NSG / VM / Public IP）
+- [x] 理解 Ansible 基本概念（inventory / playbook / ad-hoc），能读懂简单 playbook
+- [ ] 掌握 Terraform remote state 和模块化，能拆分为可复用 module
+- [ ] 理解 GitOps 工作流（ArgoCD / FluxCD 基本概念），能手动部署 ArgoCD
+- [ ] GitHub 上有结构良好的 IaC 项目仓库（含架构图、README、输出）
 
 ---
 
-## 四、第 3 月：Docker + Kubernetes（容器化）
+## 四、第 3 月：Docker + Kubernetes + GitOps（容器化）
 
-> **目标**：掌握容器化技术，能用 Docker 打包应用并用 K8s 编排部署
-> **工具**：Docker Desktop（无Hyper-V模式）、Minikube/Kind、kubectl、Helm
+> **目标**：掌握容器化技术，能用 Docker 打包应用并用 K8s 编排部署；初步了解 GitOps 自动交付流程
+> **工具**：Docker Desktop（无Hyper-V模式）、Minikube/Kind、kubectl、Helm、ArgoCD
 
 ### 第 9 周：Docker 基础
 
@@ -219,10 +223,11 @@
 - [ ] 掌握 kubectl 常用命令和 YAML 定义
 - [ ] 理解 K8s 核心概念（Pod/Deployment/Service/ConfigMap/Secret/PVC）
 - [ ] 能用 Helm 管理应用发布
+- [ ] 会用 ArgoCD 实现 GitOps 自动同步（手动部署 + 基本配置）
 
 ---
 
-## 五、第 4 月：CI/CD + 多环境 + 监控
+## 五、第 4 月：CI/CD + 多环境 + 可观测性（Platform Engineering 核心）
 
 > **目标**：配置完整的 CI/CD 流水线，搭建监控栈，实现端到端自动化
 > **工具**：GitHub Actions、Prometheus + Grafana、Azure Monitor
