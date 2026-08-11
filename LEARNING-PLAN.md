@@ -6,34 +6,32 @@
 > **每日投入**：≥4 小时（工作日 2.5h 学习 + 1.5h 实验，周末 6h 项目 + 复习）
 > **休息**：每周日（避免 burnout）
 > **AI 辅助**：Hermes Agent（主模型）
+> **原则**：只学到能独立上手干活的深度。不追低频内容，不为覆盖而覆盖。每个新主题以"生产中用不用得到、用多深"决定投入时间。
 
 ---
 
 ## 目录
 
 - [一、总体路线图](#一总体路线图)
-- [二、第 1 月：Python + Linux + Git（基础夯实）](#二第-1-月python--linux--git基础夯实)
-- [三、第 2 月：Terraform + Ansible（IaC 入门）](#三第-2-月terraform--ansibleiac-入门)
-- [四、第 3 月：Docker + Kubernetes（容器化）](#四第-3-月docker--kubernetes容器化)
-- [五、第 4 月：CI/CD + 多环境 + 监控](#五第-4-月cicd--多环境--监控)
-- [六、第 5 月：综合项目实战](#六第-5-月综合项目实战)
-- [七、第 6 月：面试准备 + 求职冲刺](#七第-6-月面试准备--求职冲刺)
-- [八、复习策略与实验指南](#八复习策略与实验指南)
-- [九、推荐资源](#九推荐资源)
+- [二、第 1 月：Python + Linux + Git](#二第-1-月python--linux--git)
+- [三、第 2 月：Terraform + Ansible + Azure Auth](#三第-2-月terraform--ansible--azure-auth)
+- [四、后续（按进度灵活调整）](#四后续按进度灵活调整)
+- [五、复习策略与实验指南](#五复习策略与实验指南)
+- [六、推荐资源](#六推荐资源)
 
 ---
 
 ## 一、总体路线图
 
 ```
-月 1 (6-7月)      月 2 (7-8月)      月 3 (8-9月)      月 4 (9-10月)     月 5 (10-11月)    月 6-9 (11月-4月)
-┌──────────┐      ┌──────────┐      ┌──────────┐      ┌──────────┐      ┌──────────┐      ┌──────────┐
-│ Python   │ ──→  │Terraform │ ──→  │ Docker   │ ──→  │ CI/CD    │ ──→  │ 综合项目  │ ──→  │ 简历优化  │
-│ Linux    │      │ GitOps   │      │ K8s      │      │ 监控     │      │ 多环境   │      │ 模拟面试  │
-│ Git      │      │ 基础实验  │      │ 容器编排  │      │ 可观测性  │      │ 端到端   │      │ 求职投递  │
-└──────────┘      └──────────┘      └──────────┘      └──────────┘      └──────────┘      └──────────┘
-     ↓                  ↓                  ↓                  ↓                  ↓                  ↓
- 基础能力           IaC 能力          容器化能力         自动化能力         项目作品集           求职成功
+月 1 (6-7月)         月 2 (7-8月)         后续（按进度灵活调整）
+┌──────────────┐    ┌──────────────────┐    ┌──────────────────┐
+│ Python       │ →  │ Terraform        │ →  │ Docker / K8s     │
+│ Linux        │    │ Ansible 概念     │    │ GitOps / CI/CD   │
+│ Git          │    │ Azure Auth (SP)  │    │ 综合项目 / 面试   │
+└──────────────┘    └──────────────────┘    └──────────────────┘
+     ↓                      ↓                       ↓
+  基础能力              IaC 能力              按进度灵活调整
 ```
 
 ---
@@ -112,7 +110,7 @@
 
 ---
 
-## 三、第 2 月：Terraform + Ansible（IaC 入门）
+## 三、第 2 月：Terraform + Ansible + Azure Auth（IaC 入门）
 
 > **目标**：掌握 Terraform 声明式基础设施管理；Ansible 了解概念即可，不深入；为 Kubernetes 和 GitOps 打基础
 > **工具**：Terraform、Azure 订阅、Docker、kubectl
@@ -129,276 +127,93 @@
 | 周六 | **周末项目**：用 Terraform 部署 2 台 VM（含 NSG、负载均衡器） | — | README + 架构图 | — |
 | 周日 | 休息 | — | — | — |
 
-### 第 6 周：Ansible 入门（1 天快速了解）
-> **目标**：理解 Ansible 核心概念，能读懂简单 playbook，不追求精通
-> **说明**：Ansible 在云原生/PaaS 场景的重要性下降，压缩为 1 天概念学习，后续按需深入
+|### 第 6 周：Ansible 概念（半天）+ Azure Auth（1 天）
+> **Ansible 目标**：理解核心概念，能读懂简单 playbook，不深入
+> **Azure Auth 目标**：掌握 Service Principal + RBAC，让 Terraform 能脱离本地 `az login` 运行
+> **说明**：Ansible 压缩为半天概念阅读；增加 Azure 认证实践，为 CI/CD pipeline 打基础
 
-|| 日期 | 学习内容 (1h) | 实验 (1.5h) | Git 操作 | 复习 ||
-|------|-------------|------------|---------|------|
-| 周一 | Ansible 架构（control node/managed node）、inventory 静态/动态、ad-hoc 命令 | ansible ping all，ad-hoc 安装/卸载 nginx | 新建 ansible-learning 仓库 | Terraform state 管理 |
-| 周二 | **Terraform 模块化深化**：创建 vnet 模块、vm 模块，模块输出复用 | 将现有 VNet+VM 代码拆成可复用模块 | git submodule 概念 | Ansible 概念回顾 |
-| 周三 | Terraform plan / apply / destroy 工作流 + Makefile | 完整部署：RG → VNet → VM → destroy，封装常用命令 | 写 Makefile | Python subprocess |
-| 周四 | **Kubernetes 概念入门**（提前开始）| K8s 架构、Pod/Deployment/Service/Namespace 概念 | 新建 k8s-learning 仓库 | 本周全部复习 |
-| 周五 | **GitOps 入门**：ArgoCD/FluxCD 工作流、Git 作为唯一真相源 | 画一幅 GitOps 流水线架构图，对比 Ansible 配置方式 | GitOps 学习笔记提交 | K8s 架构 |
-| 周六 | **周末项目**：用 Terraform 部署 2 台 VM（含 NSG），并绘制 GitOps 流水线架构图 | — | README + 架构图 | — |
+| 日期 | 学习内容 | 实验 | Git 操作 | 复习 |
+|------|---------|------|---------|------|
+| 周一（半天） | Ansible：inventory / playbook / module / task / handler | 读一个完整 playbook（Nginx 部署），理解每行意思 | 无 | Terraform 模块变量传递 |
+| 周二 | Azure Auth：Service Principal 创建、RBAC 角色分配 | 创建 SP + 分配 Contributor 角色 + 测试 `az login --service-principal` | secrets/ 文件夹 + .gitignore | Terraform state 管理 |
+| 周三 | Terraform 用 SP 认证、Provider 传 client_id/secret | 把 SP 信息写入 terraform.tfvars（不进 git），跑 terraform plan 验证 | 无 | Linux 用户权限 |
+| 周四 | Managed Identity：VM 免密访问 Azure 资源 | 在 Terraform VM 上启用 MI，测试 VM 内直接用 az CLI 列出资源 | 无 | Service Principal 原理 |
+| 周五 | RBAC 细化：自定义角色、最小权限、scope 层级 | 创建自定义角色（只读 VM），分配给 SP 并测试 | 无 | 复习本周全部 |
+| 周六 | **周末项目**：用 SP 认证的 Terraform 完整部署 2 台 VM + destroy | — | 项目的 README + 架构 | — |
 | 周日 | 休息 | — | — | — |
 
-### 第 7 周：Terraform 深化 + GitOps 动手实践
-> **目标**：掌握 Terraform remote state 和模块化；亲手部署 GitOps 流水线，理解 Platform Engineering 工作方式
+### 第 7 周：Docker + 服务器管理
 
-|| 日期 | 学习内容 (1h) | 实验 (1.5h) | Git 操作 | 复习 |
-|------|-------------|------------|---------|------|
-| 周一 | Terraform remote state（Azure Storage backend）、state lock | 配置 remote backend，state 文件存到 Azure Storage（用独立 RG） | gitignore tfstate 更新 | Git rebase |
-| 周二 | Terraform module 高级：动态块（dynamic block）、生命周期（lifecycle）| 在 NSG 用 dynamic block 生成多 rule；prevent_destroy 保护关键资源 | git submodule 或 terraform registry | Shell 函数 |
-| 周三 | 安全实践：Terraform 敏感变量、state 加密 | 用 terraform.tfvars + .gitignore 管理 secrets；sensitive = true | secrets 不进 git | Python 字符串格式化 |
-| 周四 | GitOps 动手：安装 ArgoCD 到 Minikube | 手动部署 ArgoCD，创建 Application 自动同步 Git repo | GitOps 学习笔记提交 | K8s 架构 |
-| 周五 | GitOps 工作流：Application、Sync 策略、自愈 | 修改 Git repo 中的 K8s manifest，观察 ArgoCD 自动同步 | 提交 manifest 变更 | 正则表达式 |
-| 周六 | **周末项目**：模块化 Terraform + 手动 GitOps 流水线（代码 → ArgoCD → K8s） | — | 模块化仓库结构 | — |
-| 周日 | 休息 | — | 恢复 | — |
+| 日期 | 学习内容 | 实验 | 复习 |
+|------|---------|------|------|
+| 周一 | Docker：image / container / Dockerfile / docker-compose | 写 Dockerfile 部署 Nginx + 自定义页面 | Service Principal 三要素 |
+| 周二 | Docker 网络 / volume / 多阶段构建 | docker network / docker volume / 优化镜像 | Terraform module |
+| **周三** | **服务器管理：nginx/systemd/包管理/日志** | **配置 nginx 反向代理 + systemd 管理服务** | **社区推荐 — 填补工具链空缺** |
+| 周四 | GitOps 概念：ArgoCD 架构、声明式部署 | 部署 ArgoCD（Docker Compose） | 初始化 GitOps repo |
+| 周五 | ArgoCD：Application / Sync / Health / Auto-heal | 写 ArgoCD Application 自动同步 GitHub → K8s | GitOps 核心概念 |
+| 周六 | **周末项目**：Docker + ArgoCD 部署 Nginx | — | 完整项目交付 |
+| 周日 | 休息 | — | — |
 
-### 第 8 周：复习 + 月底项目
-### 第 8 周：复习 + 月底项目
-> **项目交付**：用 Terraform 模块化部署 Azure 环境（VNet + 2 VM + NSG），配置 ArgoCD GitOps 流水线部署应用到 Minikube，展示 Platform Engineering 完整流程
-> **说明**：Ansible 配置管理作为可选加分项，不强制要求；重点展示 Git 驱动的基础设施和应用交付
+### 第 8 周：Kubernetes 核心（CKA 标准）
 
-### 第 2 月达到的里程碑 ✅
+> **注**：按 CKA（Certified Kubernetes Administrator）标准学。目标是能**独立排障**，不是"能看懂 YAML"
+> CKA 考试本身可选，但学习标准按它来
 
-- [x] 能用 Terraform 创建完整的 Azure 基础设施（RG / VNet / Subnet / NSG / VM / Public IP）
-- [x] 理解 Ansible 基本概念（inventory / playbook / ad-hoc），能读懂简单 playbook
-- [ ] 掌握 Terraform remote state 和模块化，能拆分为可复用 module
-- [ ] 理解 GitOps 工作流（ArgoCD / FluxCD 基本概念），能手动部署 ArgoCD
-- [ ] GitHub 上有结构良好的 IaC 项目仓库（含架构图、README、输出）
+| 日期 | 学习内容 | 实验 | 复习 |
+|------|---------|------|------|
+| 周一 | K8s 架构、Pod、kubectl 核心命令 | 部署第一个 Pod + 排查故障场景 | Dockerfile |
+| 周二 | Deployment、Service（ClusterIP/NodePort/LB） | 部署完整应用 + 暴露外部访问 | nginx 配置 |
+| 周三 | ConfigMap / Secret / Ingress / PVC | 配置管理 + 外部路由 + 持久化 | K8s 核心对象 |
+| 周四 | Helm 基础 + 故障排查（logs/exec/describe） | 用 Helm 部署应用 + 模拟故障排查 | CKA 考试模式 |
+| 周五 | 复习 + 综合场景练习 | 从零部署完整 WordPress + MySQL | 知识体系梳理 |
+| 周六 | **周末项目**：K8s 上部署高可用应用 | — | 项目展示 |
+| 周日 | 休息 | — | — |
 
----
+### 第 9 周：CI/CD + GitOps 深度
 
-## 四、第 3 月：Docker + Kubernetes + GitOps（容器化）
+| 日期 | 学习内容 | 实验 | 复习 |
+|------|---------|------|------|
+| 周一 | GitHub Actions 概念（Workflow/Job/Step/Runner） | 写第一个 workflow | K8s 排障 |
+| 周二 | Actions 触发事件 + Secrets + Matrix | 配置多环境触发 | Terraform state |
+| 周三 | Terraform CI/CD：plan on PR, apply on merge | Actions 中运行 TF | Service Principal |
+| 周四 | 多环境管理（dev/staging/prod） | Terraform workspace | Git 分支策略 |
+| 周五 | 审批门 + 安全扫描（Trivy） | PR → plan → approve → apply → deploy | RBAC |
+| 周六 | **周末项目**：完整 CI/CD pipeline | — | — |
+| 周日 | 休息 | — | — |
 
-> **目标**：掌握容器化技术，能用 Docker 打包应用并用 K8s 编排部署；初步了解 GitOps 自动交付流程
-> **工具**：Docker Desktop（无Hyper-V模式）、Minikube/Kind、kubectl、Helm、ArgoCD
+### 第 10 周：监控 + DevSecOps
 
-### 第 9 周：Docker 基础
+| 日期 | 学习内容 | 实验 | 复习 |
+|------|---------|------|------|
+| 周一 | Prometheus 架构 + node_exporter | 部署 Prometheus + 采集指标 | Docker 网络 |
+| 周二 | PromQL 基础（rate/irate/histogram） | 编写 CPU/内存告警规则 | K8s Service |
+| 周三 | Grafana 面板 | 导入 Node Exporter 面板 | 监控指标含义 |
+| 周四 | Alertmanager（告警路由 + 通知） | 配置告警通知 | PromQL |
+| **周五** | **DevSecOps：Trivy 容器扫描 / Key Vault / 最小权限** | **扫描镜像 + 修复高风险漏洞** | **社区推荐** |
+| 周六 | **周末项目**：完整监控栈（Prometheus + Grafana + Alertmanager） | — | — |
+| 周日 | 休息 | — | — |
 
-| 日期 | 学习内容 (1h) | 实验 (1.5h) |
-|------|-------------|------------|
-| 周一 | Docker 架构（image/container/registry）、安装 | docker pull/run/ps/stop/rm |
-| 周二 | Dockerfile 编写（FROM, RUN, COPY, CMD, ENTRYPOINT） | 将 第1月的 Python 脚本打包为镜像 |
-| 周三 | Docker 网络（bridge/host/none, port mapping） | 部署 nginx 容器，映射端口，测试连通性 |
-| 周四 | Docker 数据持久化（volume, bind mount） | MySQL 容器 + 持久化数据 |
-| 周五 | Docker Compose 编排多容器 | 写 docker-compose.yml：web + db + cache |
-| 周六 | **周末项目**：Python Flask + Redis 应用容器化，docker-compose 一键部署 | — |
-| 周日 | 休息 | — |
+### 第 11-12 周：Azure 网络深入 + 综合项目
 
-### 第 10 周：Kubernetes 基础
+> **差异化路线**：你的 CCNP + 本项目 = 面试王牌。候选人里懂 K8s 的人多，懂 K8s 又懂网络架构的人少
 
-| 日期 | 学习内容 | 实验 |
-|------|---------|------|
-| 周一 | K8s 架构（Master/Node, Pod, Service, Deployment） | 安装 Minikube（或 Kind），kubectl 基础命令 |
-| 周二 | Pod + Deployment（声明式 YAML） | 部署 nginx deployment，暴露为 service |
-| 周三 | Service（ClusterIP, NodePort, LoadBalancer） | 配置 Ingress，测试路由 |
-| 周四 | ConfigMap + Secret | 将配置从镜像中解耦 |
-| 周五 | 存储（PVC, PV, StorageClass） | 为 WordPress 配置持久存储 |
-| 周六 | **周末项目**：部署一个完整的 LEMP（Linux + Nginx + MySQL + PHP）在 Minikube 上 | — |
-| 周日 | 休息 | — |
+| 周 | 内容 | 实验 |
+|----|------|------|
+| 第 11 周 | Azure VNet peering / VPN Gateway / Load Balancer / 流量架构 | 从 CCNP 视角设计 Azure 网络，文档化对比 |
+| 第 12 周 | **端到端综合项目**：TF → CI/CD → K8s → 监控 | GitHub 完整项目 + 架构图 + README |
 
-### 第 11 周：K8s 进阶
+### 第 13-16 周：面试准备 + 求职
 
-| 日期 | 学习内容 | 实验 |
-|------|---------|------|
-| 周一 | 健康检查（liveness, readiness, startup probe） | 为所有 deployment 配置健康检查 |
-| 周二 | 滚动更新 + 回滚（RollingUpdate, maxSurge, maxUnavailable） | 模拟版本更新并回滚 |
-| 周三 | HPA（Horizontal Pod Autoscaler） | 用压测触发自动扩容 |
-| 周四 | Namespace + RBAC | 创建多租户环境 |
-| 周五 | Helm 包管理（chart 结构、模板、发布） | 将第 9 周的 Flask 应用打包为 Helm chart |
-| 周六 | **周末项目**：Helm chart 发布到 GitHub Pages | — |
-| 周日 | 休息 | — |
-
-### 第 12 周：容器化项目集成
-
-> **项目交付**：用 Docker 打包 IaC 项目中部署的应用，在 Minikube 上运行，Helm 管理发布
-
-### 第 3 月达到的里程碑 ✅
-
-- [ ] 能写 Dockerfile 和 docker-compose.yml
-- [ ] 能在 Minikube 上部署多容器应用
-- [ ] 掌握 kubectl 常用命令和 YAML 定义
-- [ ] 理解 K8s 核心概念（Pod/Deployment/Service/ConfigMap/Secret/PVC）
-- [ ] 能用 Helm 管理应用发布
-- [ ] 会用 ArgoCD 实现 GitOps 自动同步（手动部署 + 基本配置）
+| 周 | 内容 | 产出 |
+|----|------|------|
+| 第 13 周 | DevOps 面试题库（50+ 问答） | 复习笔记 |
+| 第 14 周 | STAR 故事 + 简历 + LinkedIn | 最终版简历 |
+| 第 15 周 | 模拟面试（3 轮） | 录屏复盘 |
+| 第 16 周 | 投递（每日 5-10） | 收到面试通知 |
 
 ---
 
-## 五、第 4 月：CI/CD + 多环境 + 可观测性（Platform Engineering 核心）
-
-> **目标**：配置完整的 CI/CD 流水线，搭建监控栈，实现端到端自动化
-> **工具**：GitHub Actions、Prometheus + Grafana、Azure Monitor
-
-### 第 13 周：GitHub Actions 基础
-
-| 日期 | 学习内容 | 实验 |
-|------|---------|------|
-| 周一 | GitHub Actions 概念（Workflow, Job, Step, Runner） | 写第一个 workflow：echo Hello World |
-| 周二 | Trigger 事件（push, pull_request, schedule, workflow_dispatch） | 配置多种 trigger |
-| 周三 | Matrix build、环境变量、Secrets | 多版本 Python 测试 |
-| 周四 | Artifact + Cache（actions/upload-artifact, actions/cache） | 加速依赖安装 |
-| 周五 | 自托管 Runner（在本地或 Azure VM 上部署） | 配置 self-hosted runner |
-| 周六 | **周末项目**：Python 项目 CI（lint + test + build + push Docker） | — |
-| 周日 | 休息 | — |
-
-### 第 14 周：CI/CD 完整流水线
-
-| 日期 | 学习内容 | 实验 |
-|------|---------|------|
-| 周一 | Terraform CI/CD：plan on PR, apply on merge | GitHub Actions 中运行 terraform plan/apply |
-| 周二 | Ansible CI/CD：在 Actions 中触发 Ansible playbook | SSH key 管理 + ansible-playbook |
-| 周三 | 多环境（dev/staging/prod）：Terraform workspace | 每个环境独立 state 和变量 |
-| 周四 | 安全扫描：Trivy（容器镜像）、Checkov（IaC 安全） | 在 pipeline 中加入安全检查 |
-| 周五 | 审批门（environment protection rule、手动审批） | staging → prod 需要 review 才 deploy |
-| 周六 | **周末项目**：完整 CI/CD 流水线：push → test → build → deploy | — |
-| 周日 | 休息 | — |
-
-### 第 15 周：监控与可观测性
-
-| 日期 | 学习内容 | 实验 |
-|------|---------|------|
-| 周一 | Prometheus 架构 + node_exporter | 部署 Prometheus + node_exporter |
-| 周二 | PromQL 基础（查询、聚合、rate/irate） | 编写 CPU/内存/磁盘告警规则 |
-| 周三 | Grafana 面板（dashboard 创建和模板） | 导入 Node Exporter Full 面板 |
-| 周四 | Alertmanager（告警路由、接收器、静默） | 配置 Email/Webhook 通知 |
-| 周五 | Azure Monitor（指标、日志 Analytics、告警） | 配置 Azure VM 监控告警 |
-| 周六 | **周末项目**：搭建完整监控栈（Prometheus + Grafana + Alertmanager） | — |
-| 周日 | 休息 | — |
-
-### 第 16 周：复习 + 月项目
-
-> **项目交付**：GitHub Actions 完整 CI/CD + 监控栈集成。代码 push → 自动部署到 Azure → Prometheus 采集指标 → Grafana 展示
-
-### 第 4 月达到的里程碑 ✅
-
-- [ ] 能写完整的 GitHub Actions workflow
-- [ ] Terraform + Ansible 在 CI/CD 中自动运行
-- [ ] 理解多环境管理和部署策略
-- [ ] 部署 Prometheus + Grafana + Alertmanager
-- [ ] 能用 PromQL 查询指标
-
----
-
-## 六、第 5 月：综合项目实战
-
-> **目标**：构建一个可展示在 GitHub 和简历上的完整 DevOps 项目
-> **项目名称**：`azure-devops-showcase` — Azure 全自动化部署流水线
-
-### 项目架构
-
-```
-用户 push 代码
-     ↓
-GitHub Actions CI/CD
-     ├── static analysis (lint + security scan)
-     ├── terraform plan/apply (dev/staging/prod)
-     ├── ansible configure servers
-     ├── build & push Docker images
-     └── deploy to Kubernetes
-     ↓
-Azure 基础设施
-     ├── VNet + subnets + NSG
-     ├── AKS cluster (或 VMSS)
-     ├── Azure Database (MySQL/PostgreSQL)
-     ├── Azure Storage + CDN
-     └── Application Gateway / Load Balancer
-     ↓
-监控栈
-     ├── Prometheus (Azure VM 或 AKS)
-     ├── Grafana dashboards
-     ├── Alertmanager (email + slack webhook)
-     └── Azure Monitor (alerts + logs)
-```
-
-### 第 17-18 周：项目骨架搭建
-
-- 设计 Git 仓库结构
-- Terraform 编写完整 Azure 基础设施（module 化）
-- Ansible roles 编写系统 baseline
-- 基础 pipeline 配置（plan/apply/lint）
-
-### 第 19-20 周：项目功能完善
-
-- Docker 化应用服务
-- K8s manifests 编写
-- Helm chart 化
-- Prometheus + Grafana 集成到项目
-- CI/CD 流水线 end-to-end 验证
-
-### 第 5 月达到的里程碑 ✅
-
-- [ ] GitHub 上有完整的 `azure-devops-showcase` 项目
-- [ ] 项目的 README 包含架构图、部署说明、视频演示
-- [ ] CI/CD 流水线覆盖代码检查 → IaC → 部署全过程
-- [ ] 监控和告警覆盖所有关键组件
-- [ ] 项目可直接在面试中展示
-
----
-
-## 七、第 6 月：面试准备 + 求职冲刺
-
-> **目标**：简历优化、面试题库、模拟面试、开始投递
-> **注意**：此月需并行推进以下所有板块
-
-### 第 21 周：简历 + LinkedIn 优化
-
-| 任务 | 具体内容 | 产出 |
-|------|---------|------|
-| 简历重写 | STAR 法则描述项目经验 | v2.0 简历 PDF |
-| LinkedIn 优化 | Headline, About, Skills, Featured project | 完整 LinkedIn 主页 |
-| GitHub Profile | 完善个人 README，pin 项目仓库 | 专业的 GitHub 首页 |
-
-### 第 22 周：技术面试题库
-
-| 领域 | 准备内容 | 参考资源 |
-|------|---------|---------|
-| Python | LeetCode 简单（数组、字符串、哈希表） | Neetcode 150 |
-| Linux | 常见命令、排障场景、Shell 脚本 | Linux Journey |
-| Terraform | state 管理、模块设计、remote backend | TF 认证指南 |
-| Ansible | playbook 设计、roles、Vault | Ansible 官方文档 |
-| Docker/K8s | Dockerfile 优化、K8s 排障 | CKAD 模拟题 |
-| Azure | VNet、LB、VMSS、AKS 场景题 | AZ-104 复习资料 |
-| CI/CD | pipeline 设计、部署策略 | GitHub Actions 文档 |
-| SRE | SLI/SLO、故障排查、容量规划 | Google SRE 书籍 |
-| 网络 | DNS、TCP/IP、HTTP、负载均衡 | CCNP 知识回顾 |
-
-### 第 23 周：场景面试 + 系统设计
-
-| 日期 | 内容 | 形式 |
-|------|------|------|
-| 周一 | 系统设计：设计一个 Web 高可用架构 | 画图 + 讲解 |
-| 周二 | 排障面试：CI/CD 失败排查流程 | 口述思路 |
-| 周三 | 场景面试：Terraform state 被锁定如何解除 | 口述 + 演示 |
-| 周四 | 场景面试：Pod CrashLoopBackOff 排查 | 口述 + 演示 |
-| 周五 | 场景面试：生产环境 CPU 飙高如何排查 | 口述 |
-| 周六 | 模拟面试 1（完整 45 分钟） | 录屏复盘 |
-| 周日 | 休息 | — |
-
-### 第 24 周：求职投递 + 持续面试
-
-| 任务 | 具体行动 |
-|------|---------|
-| 平台注册 | LinkedIn, Indeed, Glassdoor, Job Bank, Robert Half |
-| 目标岗位 | Cloud Admin, DevOps Engineer, SRE, Automation Engineer |
-| 每日投递 | 每天投 5-10 个岗位，记录进展 |
-| 持续学习 | 刷题 + 面试复盘 |
-| 人脉拓展 | Toronto DevOps Meetup, LinkedIn 加 HR/猎头 |
-| 合同岗位 | 关注 contract 机会（更快入门） |
-
-### 第 6 月达到的里程碑 ✅
-
-- [ ] 简历和 LinkedIn 通过朋友/社区 review
-- [ ] 技术面试题库覆盖 80% 常见问题
-- [ ] 完成 5+ 次模拟面试
-- [ ] 已投递 50+ 个岗位
-- [ ] 收到面试通知开始实战
-
----
-
-## 八、复习策略与实验指南
+## 五、复习策略与实验指南
 
 ### 每日复习机制
 
@@ -463,7 +278,7 @@ command here
 
 ---
 
-## 九、推荐资源
+## 六、推荐资源
 
 ### 学习平台
 

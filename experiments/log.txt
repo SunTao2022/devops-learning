@@ -1,6 +1,0 @@
-INFO  Server started
-ERROR Connection timeout
-INFO  Request received
-ERROR Disk full
-WARN  Memory high
-AAA
