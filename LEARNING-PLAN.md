@@ -18,6 +18,7 @@
 - [四、后续（按进度灵活调整）](#四后续按进度灵活调整)
 - [五、复习策略与实验指南](#五复习策略与实验指南)
 - [六、推荐资源](#六推荐资源)
+- [七、查文档 / 查模板学习计划](#七查文档--查模板学习计划元技能贯穿始终)
 
 ---
 
@@ -337,6 +338,48 @@ command here
 ### 🎯 明日计划
 - ________________________________
 ```
+
+---
+
+## 七、查文档 / 查模板学习计划（元技能，贯穿始终）
+
+> **为什么单列**：生产环境里没人背模板，都是"查文档 + 抄示例 + 改参数"。这个技能决定了你离开 AI 后能不能独立干活。2026-08-15 实战中发现（github-script 模板改编），正式列入计划。
+
+### 核心心法（记住这个思维模型）
+
+```
+拿到官方示例 → 问自己 3 个问题：
+  ① 调用的 API/动作一样吗？  → 一样 → 照抄（骨架）
+  ② 内容来源一样吗？        → 不一样 → 改内容（body/参数）
+  ③ 触发条件一样吗？        → 不一样 → 改 on / 加 if
+```
+
+### 查文档的四个层级（从近到远，按优先级）
+
+| 层级 | 工具 | 什么情况用 | 示例 |
+|------|------|-----------|------|
+| ① 命令行内置 | `--help` / `man` / `kubectl explain` | 命令参数、K8s 字段 | `kubectl explain pod.spec` |
+| ② 官方文档站 | registry.terraform.io（azurerm 资源）、kubernetes.io、docs.github.com、docs.docker.com | 资源参数、概念、workflow 语法 | 写 `azurerm_xxx` 时查参数 |
+| ③ Action/工具 README | 各 action 的 GitHub 仓库 | GitHub Actions 用法 | `actions/github-script` 的 README |
+| ④ 搜索 + AI | 搜索引擎 site: 语法 + AI 解读 | 补充，不替代官方文档 | `site:registry.terraform.io azurerm nsg` |
+
+### 文档阅读姿势（不从头读到尾）
+
+```
+① 跳过介绍/声明（前 80% 通常是废话）
+② 找 Usage / Example / Inputs 段落
+③ 先看示例代码 → 复制 → 改参数
+④ 不认识的字段 → 回头查 Inputs 表格
+```
+
+### 需要练的实战场景（逐步解锁）
+
+- [ ] 查 Terraform azurerm 资源参数（registry.terraform.io）
+- [ ] 查 GitHub Action 用法（action 的 GitHub 仓库 README）
+- [ ] 查 K8s 对象字段（kubectl explain）
+- [ ] 用 `--help` 快速定位命令参数
+- [ ] 模板改编练习：官方示例 → 自己的场景（照抄 + 改内容 + 加准备）
+- [ ] 结果传递两种方式：文件传递 vs 步骤输出（step outputs）
 
 ---
 
