@@ -63,6 +63,11 @@
 - [x] 私有仓库认证：ghcr.io 需要 imagePullSecrets（K8s Secret 存 PAT），GitHub Secret 给 CI、K8s Secret 给集群，两个不同
 - [x] Docker 镜像分层：每层 = Dockerfile 一条指令；推送时 `Layer already exists` = 复用旧层，只传变化部分
 - [x] 生产密钥管理：裸 base64 进 Git 危险 → Key Vault / External Secrets 是生产标准
+- [x] 监控栈实操：helm install kube-prometheus-stack → Prometheus + Grafana + Alertmanager 全套
+- [x] PromQL 查询：指标名 + 标签过滤（{namespace="xxx", pod=~"xxx.*"}），过滤越多结果越少
+- [x] `up` 指标：1=采集正常，0=采集失败（Minikube 的 etcd/scheduler 是已知限制，忽略）
+- [x] 监控链路：kubelet 采集 → Prometheus 存储 → Grafana 可视化（事前发现 vs 排障事后）
+- [x] Helm 查初始凭据：`kubectl get secret xxx -o jsonpath='{.data.admin-password}' | base64 -d`
 - [x] 为什么一个 Deployment 要管理多个 Pod（而不是 1 个）——可用性 + 滚动更新
 - [ ] `kubectl port-forward` 的作用和限制
 
