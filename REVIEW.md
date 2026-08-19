@@ -43,6 +43,9 @@
 - [x] 写 GitHub Actions workflow（on/jobs/steps/uses/run + Secrets 注入 env）
 - [x] CI 排障完整流程：`gh run list` → `gh run view <id> --log-failed` → 定位 → 修复 → rerun
 - [x] `kubectl logs` / `describe` 各用一次（CrashLoopBackOff + ErrImagePull 双故障实验）
+- [x] 完整生产流水线实操：源码 → Dockerfile → build → 本地验证 → 推 ghcr.io → CI 自动化 → K8s 部署（Secret+Deployment+Service）→ 访问 → 排障
+- [x] 排障演练：ErrImagePull（tag 打错）→ 定位 → `kubectl set image` 修复 → 验证
+- [x] `kubectl set image` 直接改集群配置（不用找 YAML 文件）
 - [ ] 创建 Deployment → scale 扩缩 → 删 Pod → 验证自动恢复
 
 ---
@@ -57,6 +60,9 @@
 - [x] 密钥 vs 参数分开存：不敏感参数进 Git/tfvars，SP 密钥进 GitHub Secrets，应用密钥进 Key Vault
 - [x] 生产参数按环境分文件：terraform.tfvars.dev / .prod，用 `-var-file` 切换
 - [x] 四眼原则：写代码的人 ≠ 审批 apply 的人（PR review + 审批门）
+- [x] 私有仓库认证：ghcr.io 需要 imagePullSecrets（K8s Secret 存 PAT），GitHub Secret 给 CI、K8s Secret 给集群，两个不同
+- [x] Docker 镜像分层：每层 = Dockerfile 一条指令；推送时 `Layer already exists` = 复用旧层，只传变化部分
+- [x] 生产密钥管理：裸 base64 进 Git 危险 → Key Vault / External Secrets 是生产标准
 - [x] 为什么一个 Deployment 要管理多个 Pod（而不是 1 个）——可用性 + 滚动更新
 - [ ] `kubectl port-forward` 的作用和限制
 
