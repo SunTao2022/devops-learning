@@ -181,6 +181,7 @@ Layer 7：Azure 认证 + 安全
 | 5 | **Loki 日志采集** | 监控层 | 1 天 | 🟡 |
 | 6 | **CKA 刷题** | K8s 层 | 2-3 周可选 | 🟡 |
 | 7 | **Azure Static Web Apps 项目** | 综合 | 2-3 天 | 🟡 |
+| 8 | **AKS（Azure Kubernetes Service）** | 云托管 K8s | 综合项目阶段 | 🟡 |
 | 8 | **K8s HPA + 资源限制** | K8s 层 | 半天 | 🟢 |
 | 9 | **Alertmanager 告警配置** | 监控层 | 半天 | 🟢 |
 
