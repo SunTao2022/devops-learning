@@ -68,6 +68,10 @@
 - [x] `up` 指标：1=采集正常，0=采集失败（Minikube 的 etcd/scheduler 是已知限制，忽略）
 - [x] 监控链路：kubelet 采集 → Prometheus 存储 → Grafana 可视化（事前发现 vs 排障事后）
 - [x] Helm 查初始凭据：`kubectl get secret xxx -o jsonpath='{.data.admin-password}' | base64 -d`
+- [x] ArgoCD GitOps 完整闭环：安装 → 配置 Application（Source/Destination）→ 检测差异（OutOfSync）→ 手动 Sync
+- [x] ArgoCD 坑：path 指向非 YAML 目录（package.json）→ Missing；namespace 缺失 → InvalidSpecError。K8s YAML 放独立目录 k8s/
+- [x] 镜像不可变 tag（git SHA）+ ArgoCD：YAML 变才检测到；latest 检测不到（GitOps 标准）
+- [x] GitOps 原则：Git 是唯一真相，集群向 Git 看齐；Manual 模式 = prod 可控，Automatic = dev 快速
 - [x] 为什么一个 Deployment 要管理多个 Pod（而不是 1 个）——可用性 + 滚动更新
 - [ ] `kubectl port-forward` 的作用和限制
 
