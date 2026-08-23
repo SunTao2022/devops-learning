@@ -64,6 +64,8 @@
 - [x] Docker 镜像分层：每层 = Dockerfile 一条指令；推送时 `Layer already exists` = 复用旧层，只传变化部分
 - [x] 生产密钥管理：裸 base64 进 Git 危险 → Key Vault / External Secrets 是生产标准
 - [x] 监控栈实操：helm install kube-prometheus-stack → Prometheus + Grafana + Alertmanager 全套
+- [x] 业务指标监控完整链路：nginx stub_status → exporter 容器 → Service 端口 → ServiceMonitor → Prometheus 抓取 → Grafana
+- [x] ServiceMonitor 三坑：① 需 release: monitoring 标签 ② Service 需 metadata.labels 匹配 ③ Service 多端口必须命名（ports[].name）
 - [x] PromQL 查询：指标名 + 标签过滤（{namespace="xxx", pod=~"xxx.*"}），过滤越多结果越少
 - [x] `up` 指标：1=采集正常，0=采集失败（Minikube 的 etcd/scheduler 是已知限制，忽略）
 - [x] 监控链路：kubelet 采集 → Prometheus 存储 → Grafana 可视化（事前发现 vs 排障事后）
