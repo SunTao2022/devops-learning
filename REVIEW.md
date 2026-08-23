@@ -66,6 +66,10 @@
 - [x] 监控栈实操：helm install kube-prometheus-stack → Prometheus + Grafana + Alertmanager 全套
 - [x] 业务指标监控完整链路：nginx stub_status → exporter 容器 → Service 端口 → ServiceMonitor → Prometheus 抓取 → Grafana
 - [x] ServiceMonitor 三坑：① 需 release: monitoring 标签 ② Service 需 metadata.labels 匹配 ③ Service 多端口必须命名（ports[].name）
+- [x] 告警规则（PrometheusRule）：`up == 0 or absent(...)`（up==0 不处理"target 消失"，absent() 检测不存在）；for: 1m 防抖动；告警在 Prometheus Alerts 页签看（不在 Grafana）
+- [x] 告警测试被 ArgoCD 自愈拦截（scale 被拉回）→ 理解 GitOps 自愈机制
+- [x] Trivy 扫描：docker run aquasec/trivy；读报告（Library/CVE/Severity/Status/Fixed Version）；生产 CI 集成（--severity CRITICAL,HIGH --exit-code 1 拦截）
+- [x] 镜像漏洞 = 依赖版本漏洞累积（旧 nginx 58 漏洞 vs 新版 0 漏洞）→ 定期更新基础镜像
 - [x] PromQL 查询：指标名 + 标签过滤（{namespace="xxx", pod=~"xxx.*"}），过滤越多结果越少
 - [x] `up` 指标：1=采集正常，0=采集失败（Minikube 的 etcd/scheduler 是已知限制，忽略）
 - [x] 监控链路：kubelet 采集 → Prometheus 存储 → Grafana 可视化（事前发现 vs 排障事后）
