@@ -83,6 +83,31 @@
 
 ---
 
+## 🎯 明日复习（2026-09-18 指定）
+
+### etcd（用户指定）
+- [ ] **etcd 备份命令**：`etcdctl snapshot save <file>` + 三个 TLS 参数（--cacert/--cert/--key）
+- [ ] 证书路径从哪来：从 `/etc/kubernetes/manifests/etcd.yaml` 里抄（CKA 考试技巧）
+- [ ] 恢复命令：`etcdctl snapshot restore <file> --data-dir=新目录 --initial-cluster-token=新token`
+- [ ] 为什么 etcd 是静态 Pod？（鸡生蛋：API Server 依赖 etcd，etcd 不能依赖 API Server）
+- [ ] 谁唯一有权访问 etcd？（只有 API Server；其他组件都通过它）
+- [ ] etcd 存什么？（K8s 全部状态，/registry 前缀下）
+
+### K8s Service / 排障（今天新学）
+- [ ] Service 排障路径：Pod 健康 + 访问不通 → 查 Endpoints → describe svc 看 Port/TargetPort → 查 selector
+- [ ] readinessProbe 失败的现象：Pod `Running` 但 `0/1`（不 Ready）→ 从 Endpoints 摘除 → 不接受流量
+- [ ] livenessProbe vs readinessProbe 区别（liveness 失败=杀重启，readiness 失败=摘流量）
+- [ ] `ProgressDeadlineExceeded`：rollout 超时（默认 600s）后 Deployment 放弃推进，**不会自动回滚**
+- [ ] Service 三种类型：ClusterIP（内部）/ NodePort（节点端口）/ LoadBalancer（云 LB）
+- [ ] 三层端口：targetPort（容器实际监听）/ port（Service 入口）/ nodePort（节点暴露）
+- [ ] `kubectl get -o yaml` 的输出 ≠ 可 apply 的源文件（含 resourceVersion/status/uid 等运行时字段）
+- [ ] `--dry-run=client -o yaml` 生成的才是干净源文件
+- [ ] apply 是声明式：文件说什么就是什么（不完整文件会删字段；replicas 会被文件值覆盖）
+- [ ] `kubectl diff -f file.yaml` 应用前预览差异（防御手段）
+- [ ] imperative（scale/set/patch）和 declarative（apply）混用会打架 → 生产只用 GitOps
+
+---
+
 ## 优先级 4：细节查漏（看 STUDY-NOTES.md 对应章节）
 
 - [ ] Git: stash / rebase / amend 的适用场景
