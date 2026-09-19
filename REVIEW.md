@@ -123,3 +123,13 @@
 2. 能立刻答/写的打 ✅
 3. 卡壳的标记 ❌，当天重点补
 4. 每周五更新这个清单，加入新学的内容
+
+---
+
+## 🔁 二次复习（2026-09-19 指定，第一遍没答上的）
+
+- [ ] etcd 备份命令：`etcdctl snapshot save <file>` + `--cacert/--cert/--key`（三个证书缺一不可，为什么？）
+- [ ] 证书路径从哪抄：`/etc/kubernetes/manifests/etcd.yaml`（grep cert-file/key-file/trusted-ca-file）
+- [ ] etcd 恢复命令：`snapshot restore` + `--data-dir=新目录` + `--initial-cluster-token=新token`
+- [ ] etcd 为什么是静态 Pod？（鸡生蛋：API Server 依赖 etcd）
+- [ ] ProgressDeadlineExceeded 含义 + 不会自动回滚
