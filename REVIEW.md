@@ -133,3 +133,16 @@
 - [ ] etcd 恢复命令：`snapshot restore` + `--data-dir=新目录` + `--initial-cluster-token=新token`
 - [ ] etcd 为什么是静态 Pod？（鸡生蛋：API Server 依赖 etcd）
 - [ ] ProgressDeadlineExceeded 含义 + 不会自动回滚
+
+---
+
+## 🔧 技能验收（每周自查）
+
+### vim 编辑（CKA 硬技能，2026-09-26 加入）
+- [ ] `:wq` 保存退出 / `:q!` 放弃退出 / `dd` 删行 / `u` 撤销
+- [ ] ★ `:set paste` 粘贴前必用（否则 YAML 缩进层层叠加）
+- [ ] `:%s/旧/新/g` 全局替换
+- [ ] `/关键词` 搜索 + `n` 下一个；`G` 末行 / `:数字` 跳行
+- [ ] `sudo tee 文件 > /dev/null << 'EOF' ... EOF`（不进编辑器创建文件）
+- [ ] 验收：60 秒内"打开 → 改一行 → 保存退出"
+（练习任务见桌面 `vim训练任务-CKA技能.md`）

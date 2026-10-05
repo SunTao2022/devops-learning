@@ -170,6 +170,48 @@
 | 周六 | **周末项目**：K8s 上部署高可用应用 | — | 项目展示 |
 | 周日 | 休息 | — | — |
 
+### CKA 考试技能：vim + heredoc（必练，穿插进行）
+
+> **背景**（2026-09-26 加入）：CKA 考试环境是浏览器终端 + SSH 到节点，**没有 VS Code**。
+> 必须能在终端里编辑 YAML——vim 是硬技能，不练会直接丢分。
+> 触发点：Minikube 精简镜像只有 `vi`（无 vim/nano），用户实测发现。
+
+#### 为什么必须练
+- 考试要**改节点上的文件**：静态 Pod manifest、etcd manifest、kubelet 配置
+- 从 kubernetes.io 文档**复制 YAML → 粘贴到终端/vim**（考试允许开文档）
+- 粘贴多行 YAML 不做 `:set paste` 会缩进层层叠加 → YAML 解析失败
+
+#### 必练清单（做熟为止）
+
+| # | 技能 | 操作 |
+|---|------|------|
+| 1 | 进出编辑模式 | `i` 进入 / `Esc` 退出 |
+| 2 | 保存 / 放弃 | `:wq` 保存退出 / `:q!` 不保存退出 |
+| 3 | ★ 粘贴防缩进 | `:set paste` → `i` → 粘贴 → `:set nopaste` |
+| 4 | 删行 / 撤销 | `dd`（命令模式） / `u` |
+| 5 | 搜索 | `/关键词` + 回车，`n` 下一个 |
+| 6 | 跳转 | `gg`（首行）/ `G`（末行）/ `:数字`（跳行） |
+| 7 | 替换 | `:%s/旧/新/g` |
+| 8 | heredoc 备选 | `sudo tee 文件 > /dev/null << 'EOF' ... EOF` |
+
+#### 练习环境（两处都要练）
+- **Git Bash**（自带完整 vim）：`vim ~/devops-learning/vim-practice.txt`
+- **Minikube VM**（只有 vi）：`minikube ssh "sudo vi /etc/kubernetes/manifests/xxx.yaml"`
+
+#### 练习任务（每项重复 3 遍，直到不用想）
+1. 新建文件 → 输入 10 行 YAML → `:wq` 保存退出
+2. 打开文件 → `dd` 删第 3 行 → `u` 撤销 → 保存
+3. 打开文件 → `:%s/nginx/nginx:1.25/g` 全局替换 → 保存
+4. ★ 模拟考试场景：`:set paste` → 粘贴一段多行 YAML → 检查缩进正确 → 保存
+5. 搜索 + 跳行：`/image` → `n` → `G` → `:5`
+
+#### 验收标准
+- [ ] 60 秒内完成"打开文件 → 改一行 → 保存退出"
+- [ ] 粘贴多行 YAML 后缩进完全正确（无叠加）
+- [ ] `:wq` / `:q!` / `dd` / `u` / `:set paste` 不用查资料
+- [ ] 会用 `sudo tee` + heredoc 创建文件（不进编辑器）
+
+
 ### 第 9 周：CI/CD + GitOps 深度
 
 | 日期 | 学习内容 | 实验 | 复习 |
