@@ -242,7 +242,7 @@
 
 | 周 | 内容 | 实验 |
 |----|------|------|
-| 第 11 周 | Azure VNet peering / VPN Gateway / Load Balancer / 流量架构 | 从 CCNA 视角设计 Azure 网络，文档化对比 |
+| 第 11 周 | Azure VNet peering / VPN Gateway / Load Balancer / 流量架构 | 从网络工程视角设计 Azure 网络，文档化对比 |
 | 第 12 周 | **端到端综合项目**：TF → CI/CD → K8s → 监控 | GitHub 完整项目 + 架构图 + README |
 
 ### 第 13-16 周：面试准备 + 求职
