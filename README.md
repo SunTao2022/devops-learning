@@ -22,7 +22,6 @@ The runnable projects are maintained in their **own repositories**:
 - [Python Nginx log analyzer](https://github.com/SunTao2022/log-analyzer)
 - [Python infrastructure diagnostics](https://github.com/SunTao2022/devops-toolkit)
 
-The top-level names `devops-toolkit`, `log-analyzer`, `terraform-network`, and `terraform-rewrite` in this study repo are empty placeholders, **not copies** of the standalone projects above. Use the links instead.
 
 ## Focus
 
